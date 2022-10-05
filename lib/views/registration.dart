@@ -132,12 +132,10 @@ class _RegistrationState extends State<Registration> {
                     shape: MaterialStateProperty.all(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0))),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      print(
-                          "$name | $email | $password | $passwordConfirmation");
-                      RegistrationService(context).register(
+                      await RegistrationService(context).register(
                           name!, email!, password!, passwordConfirmation!);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

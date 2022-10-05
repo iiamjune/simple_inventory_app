@@ -10,11 +10,14 @@ class RegistrationService {
   RegistrationService(this.context);
   BuildContext context;
 
-  static MapEntry<String, String> _json =
-      MapEntry("Accept", "application/json");
+  static MapEntry<String, String> accept =
+          MapEntry("Accept", "application/json"),
+      contentType = MapEntry("Content-Type", "application/json"),
+      accessControl = MapEntry("Access-Control-Allow-Origin", "*");
 
   Map<String, String> _header() {
-    Map<String, String> content = Map.fromEntries([_json]);
+    Map<String, String> content =
+        Map.fromEntries([accept, contentType, accessControl]);
     return content;
   }
 
@@ -25,8 +28,8 @@ class RegistrationService {
     return Uri.parse(fullString);
   }
 
-  Future<Map<String, dynamic>> register(String name, String email,
-      String password, String passwordConfirmation) async {
+  Future<void> register(String name, String email, String password,
+      String passwordConfirmation) async {
     var client = http.Client();
     var response = await client.post(url(endpoint: EndPoint.register),
         headers: _header(),
@@ -37,8 +40,11 @@ class RegistrationService {
             passwordConfirmation: passwordConfirmation)));
 
     if (response.statusCode == 201) {
-      return json.decode(response.body);
+      print(response.body);
+    } else {
+      //TODO: Error Validation for existing email, and the password confirmation does not match
     }
-    return {};
+
+    client.close();
   }
 }
