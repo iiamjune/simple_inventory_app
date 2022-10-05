@@ -9,7 +9,8 @@ class Label {
       login = "Login",
       alreadyHaveAnAccount = "Already have an account?",
       dontHaveAnAccount = "Don't have an account?",
-      register = "Register";
+      register = "Register",
+      continueButton = "Continue";
 }
 
 class ErrorMessage {

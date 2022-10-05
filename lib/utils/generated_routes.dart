@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../constants/routes.dart';
 import '../views/login.dart';
 import '../views/splash.dart';
+import '../views/success.dart';
 
 class RouteGenerate {
   final GoRouter router = GoRouter(
@@ -13,7 +14,7 @@ class RouteGenerate {
         GoRoute(
           name: Routes.splash,
           path: '/',
-          builder: (context, state) => const Splash(),
+          builder: (context, state) => const Success(),
         ),
         GoRoute(
           name: Routes.register,
@@ -24,6 +25,11 @@ class RouteGenerate {
           name: Routes.login,
           path: '/login',
           builder: (context, state) => const Login(),
+        ),
+        GoRoute(
+          name: Routes.success,
+          path: '/success',
+          builder: (context, state) => const Success(),
         ),
       ]);
 }
