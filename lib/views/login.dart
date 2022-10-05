@@ -88,11 +88,10 @@ class _LoginState extends State<Login> {
                     shape: MaterialStateProperty.all(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0))),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      print("$email | $password");
-                      LoginService(context).login(email!, password!);
+                      await LoginService(context).login(email!, password!);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content:

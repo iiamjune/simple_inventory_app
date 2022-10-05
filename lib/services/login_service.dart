@@ -12,10 +12,13 @@ class LoginService {
   BuildContext context;
 
   static MapEntry<String, String> _json =
-      MapEntry("Accept", "application/json");
+          MapEntry("Accept", "application/json"),
+      contentType = MapEntry("Content-Type", "application/json"),
+      accessControl = MapEntry("Access-Control-Allow-Origin", "*");
 
   Map<String, String> _header() {
-    Map<String, String> content = Map.fromEntries([_json]);
+    Map<String, String> content =
+        Map.fromEntries([_json, contentType, accessControl]);
     return content;
   }
 
@@ -28,7 +31,7 @@ class LoginService {
 
   Future<void> login(String email, String password) async {
     var client = http.Client();
-    var response = await client.post(url(endpoint: EndPoint.register),
+    var response = await client.post(url(endpoint: EndPoint.login),
         headers: _header(),
         body: loginModelToJson(LoginModel(
           email: email,
@@ -37,6 +40,10 @@ class LoginService {
 
     if (response.statusCode == 201) {
       print(json.decode(response.body));
+    } else {
+      //TODO: Error Handling
     }
+
+    client.close();
   }
 }
