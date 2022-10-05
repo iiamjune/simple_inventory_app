@@ -6,7 +6,10 @@ class Label {
       password = "Password",
       passwordConfirmation = "Password Confirmation",
       createAccount = "Create Account",
-      login = "Login";
+      login = "Login",
+      alreadyHaveAnAccount = "Already have an account?",
+      dontHaveAnAccount = "Don't have an account?",
+      register = "Register";
 }
 
 class ErrorMessage {

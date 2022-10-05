@@ -12,4 +12,8 @@ class Navigation {
   goToRegistration() {
     context.goNamed(Routes.register);
   }
+
+  goToLogin() {
+    context.goNamed(Routes.login);
+  }
 }
