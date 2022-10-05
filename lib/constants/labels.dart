@@ -5,7 +5,8 @@ class Label {
       email = "Email",
       password = "Password",
       passwordConfirmation = "Password Confirmation",
-      createAccount = "Create Account";
+      createAccount = "Create Account",
+      login = "Login";
 }
 
 class ErrorMessage {

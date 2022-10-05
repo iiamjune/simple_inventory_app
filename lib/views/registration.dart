@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/registration_service.dart';
+import 'package:flutter_application_1/widgets/appbar.dart';
 
 import '../constants/labels.dart';
 
@@ -30,11 +31,7 @@ class _RegistrationState extends State<Registration> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          backgroundColor: Colors.indigo[600],
-          title: const Text(Label.registration),
-          centerTitle: true,
-        ),
+        appBar: PageAppBar(Label.registration),
         body: Form(
           key: _formKey,
           autovalidateMode: AutovalidateMode.onUserInteraction,
