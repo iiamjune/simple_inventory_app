@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../constants/labels.dart';
 
 class Success extends StatelessWidget {
-  const Success({super.key});
+  const Success({super.key, this.message = 'Success', this.onContinue});
+  final String? message;
+  final VoidCallback? onContinue;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class Success extends StatelessWidget {
               ),
               SizedBox(height: 20.0),
               Text(
-                "Registered successfully",
+                message!,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20.0,
@@ -39,7 +41,7 @@ class Success extends StatelessWidget {
               shape: MaterialStateProperty.all(RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0))),
             ),
-            onPressed: () {},
+            onPressed: onContinue,
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Text(
