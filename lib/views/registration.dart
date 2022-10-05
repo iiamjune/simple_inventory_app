@@ -4,6 +4,7 @@ import 'package:flutter_application_1/services/registration_service.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
 
 import '../constants/labels.dart';
+import '../services/navigation.dart';
 
 class Registration extends StatefulWidget {
   const Registration({super.key});
@@ -151,6 +152,32 @@ class _RegistrationState extends State<Registration> {
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ),
+                ),
+                Divider(
+                  color: Colors.grey,
+                  thickness: 1.0,
+                ),
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  alignment: WrapAlignment.center,
+                  direction: Axis.vertical,
+                  spacing: -10.0,
+                  children: <Widget>[
+                    Text(
+                      Label.alreadyHaveAnAccount,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigation(context).goToLogin();
+                      },
+                      child: Text(
+                        Label.login,
+                        style: TextStyle(color: Colors.indigo[600]),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

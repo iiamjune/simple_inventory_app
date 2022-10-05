@@ -4,6 +4,7 @@ import 'package:flutter_application_1/services/login_service.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
 
 import '../constants/labels.dart';
+import '../services/navigation.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -34,7 +35,7 @@ class _LoginState extends State<Login> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Icon(
-                  Icons.app_registration,
+                  Icons.login,
                   color: Colors.indigo[600],
                   size: 80.0,
                 ),
@@ -106,6 +107,32 @@ class _LoginState extends State<Login> {
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ),
+                ),
+                Divider(
+                  color: Colors.grey,
+                  thickness: 1.0,
+                ),
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  alignment: WrapAlignment.center,
+                  direction: Axis.vertical,
+                  spacing: -10.0,
+                  children: <Widget>[
+                    Text(
+                      Label.dontHaveAnAccount,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigation(context).goToRegistration();
+                      },
+                      child: Text(
+                        Label.register,
+                        style: TextStyle(color: Colors.indigo[600]),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
