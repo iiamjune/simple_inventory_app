@@ -2,6 +2,7 @@ import 'package:flutter_application_1/views/registration.dart';
 import 'package:go_router/go_router.dart';
 
 import '../constants/routes.dart';
+import '../views/login.dart';
 import '../views/splash.dart';
 
 class RouteGenerate {
@@ -18,6 +19,11 @@ class RouteGenerate {
           name: Routes.register,
           path: '/register',
           builder: (context, state) => const Registration(),
-        )
+        ),
+        GoRoute(
+          name: Routes.login,
+          path: '/login',
+          builder: (context, state) => const Login(),
+        ),
       ]);
 }

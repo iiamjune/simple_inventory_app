@@ -56,7 +56,7 @@ class _RegistrationState extends State<Registration> {
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Enter your name";
+                            return ErrorMessage.enterYourName;
                           }
                           return null;
                         },
@@ -71,11 +71,11 @@ class _RegistrationState extends State<Registration> {
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Enter an email address";
+                            return ErrorMessage.enterAnEmailAddress;
                           }
                           return EmailValidator.validate(value)
                               ? null
-                              : "Enter a valid email address";
+                              : ErrorMessage.enterAValidEmailAddress;
                         },
                         onSaved: (value) {
                           email = value;
@@ -93,10 +93,10 @@ class _RegistrationState extends State<Registration> {
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Enter a password";
+                            return ErrorMessage.enterAPassword;
                           }
                           if (value.length < 8) {
-                            return "Use 8 characters or more for your password";
+                            return ErrorMessage.useEightCharactersOrMore;
                           }
                           return null;
                         },
@@ -113,10 +113,10 @@ class _RegistrationState extends State<Registration> {
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Confirm your password";
+                            return ErrorMessage.confirmYourPassword;
                           }
                           if (value != passwordController.text) {
-                            return "Those passwords didn't match. Please try again.";
+                            return ErrorMessage.thosePasswordsDidntMatch;
                           }
                           return null;
                         },
@@ -151,7 +151,7 @@ class _RegistrationState extends State<Registration> {
                   child: const Padding(
                     padding: EdgeInsets.all(20.0),
                     child: Text(
-                      "Create Account",
+                      Label.createAccount,
                       style: TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
