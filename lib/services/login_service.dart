@@ -29,7 +29,7 @@ class LoginService {
     return Uri.parse(fullString);
   }
 
-  Future<void> login(String email, String password) async {
+  Future<Map<String, dynamic>?> login(String email, String password) async {
     var client = http.Client();
     var response = await client.post(url(endpoint: EndPoint.login),
         headers: _header(),
@@ -39,11 +39,10 @@ class LoginService {
         )));
 
     if (response.statusCode == 201) {
-      print(json.decode(response.body));
+      return json.decode(response.body);
     } else {
       //TODO: Error Handling
+      return json.decode(response.body);
     }
-
-    client.close();
   }
 }

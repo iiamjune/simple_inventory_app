@@ -5,6 +5,7 @@ import 'package:flutter_application_1/widgets/appbar.dart';
 
 import '../constants/labels.dart';
 import '../services/navigation.dart';
+import '../widgets/popup.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -18,6 +19,24 @@ class _LoginState extends State<Login> {
   final TextEditingController passwordController = TextEditingController();
   String? email;
   String? password;
+  Map<String, dynamic>? data = {};
+  String? errorMessage;
+  String? token;
+  bool success = false;
+
+  void getData() async {
+    data = (await LoginService(context).login(email!, password!));
+    setState(() {
+      if (data!.containsKey("message")) {
+        success = false;
+        errorMessage = data?["message"];
+      }
+      if (data!.containsKey("token")) {
+        success = true;
+        token = data?["token"];
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +110,22 @@ class _LoginState extends State<Login> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      await LoginService(context).login(email!, password!);
+                      getData();
+
+                      Future.delayed(Duration(seconds: 2)).then((value) {
+                        print(success);
+                        if (success) {
+                          Navigation(context).backToHome();
+                          print(token);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Token: ${token!}")));
+                        } else {
+                          errorMessage != null
+                              ? ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(errorMessage!)))
+                              : null;
+                        }
+                      });
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content:

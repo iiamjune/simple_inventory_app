@@ -28,8 +28,8 @@ class RegistrationService {
     return Uri.parse(fullString);
   }
 
-  Future<void> register(String name, String email, String password,
-      String passwordConfirmation) async {
+  Future<Map<String, dynamic>?> register(String name, String email,
+      String password, String passwordConfirmation) async {
     var client = http.Client();
     var response = await client.post(url(endpoint: EndPoint.register),
         headers: _header(),
@@ -40,11 +40,10 @@ class RegistrationService {
             passwordConfirmation: passwordConfirmation)));
 
     if (response.statusCode == 201) {
-      print(response.body);
+      return json.decode(response.body);
     } else {
       //TODO: Error Validation for existing email, and the password confirmation does not match
+      return json.decode(response.body);
     }
-
-    client.close();
   }
 }

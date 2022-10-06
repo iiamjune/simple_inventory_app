@@ -2,6 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/registration_service.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
+import 'package:flutter_application_1/widgets/popup.dart';
 
 import '../constants/labels.dart';
 import '../services/navigation.dart';
@@ -20,6 +21,27 @@ class _RegistrationState extends State<Registration> {
   String? email;
   String? password;
   String? passwordConfirmation;
+  Map<String, dynamic>? data = {};
+  String? errorMessage;
+  String? token;
+  bool success = false;
+
+  void getData() async {
+    data = (await RegistrationService(context)
+        .register(name!, email!, password!, passwordConfirmation!));
+    setState(() {
+      if (data!.containsKey("errors")) {
+        success = false;
+        if (data?["errors"].containsKey("email")) {
+          errorMessage = data?["errors"]["email"][0];
+        }
+      }
+      if (data!.containsKey("token")) {
+        success = true;
+        token = data?["token"];
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -136,8 +158,23 @@ class _RegistrationState extends State<Registration> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      await RegistrationService(context).register(
-                          name!, email!, password!, passwordConfirmation!);
+                      getData();
+
+                      Future.delayed(Duration(seconds: 2)).then((value) {
+                        if (success) {
+                          Popup(context).showSuccess(
+                            message: "Registration successful",
+                            onTap: () => Navigation(context).backToHome(),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Token: ${token!}")));
+                        } else {
+                          errorMessage != null
+                              ? ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(errorMessage!)))
+                              : null;
+                        }
+                      });
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content:
