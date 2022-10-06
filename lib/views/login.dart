@@ -2,6 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/login_service.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/labels.dart';
 import '../services/navigation.dart';
@@ -111,14 +112,16 @@ class _LoginState extends State<Login> {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
                       getData();
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
 
                       Future.delayed(Duration(seconds: 2)).then((value) {
                         print(success);
                         if (success) {
-                          Navigation(context).backToHome();
-                          print(token);
+                          prefs.setString("token", token!);
                           ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text("Token: ${token!}")));
+                          Navigation(context).backToHome();
                         } else {
                           errorMessage != null
                               ? ScaffoldMessenger.of(context).showSnackBar(

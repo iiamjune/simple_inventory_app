@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/registration_service.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
 import 'package:flutter_application_1/widgets/popup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/labels.dart';
 import '../services/navigation.dart';
@@ -159,15 +160,18 @@ class _RegistrationState extends State<Registration> {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
                       getData();
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
 
                       Future.delayed(Duration(seconds: 2)).then((value) {
                         if (success) {
+                          prefs.setString("token", token!);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Token: ${token!}")));
                           Popup(context).showSuccess(
                             message: "Registration successful",
                             onTap: () => Navigation(context).backToHome(),
                           );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Token: ${token!}")));
                         } else {
                           errorMessage != null
                               ? ScaffoldMessenger.of(context).showSnackBar(
