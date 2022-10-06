@@ -47,7 +47,7 @@ class _LoginState extends State<Login> {
         appBar: PageAppBar(Label.login),
         body: Form(
           key: _formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          autovalidateMode: AutovalidateMode.disabled,
           child: Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 50.0, vertical: 30.0),

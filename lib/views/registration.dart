@@ -58,7 +58,7 @@ class _RegistrationState extends State<Registration> {
         appBar: PageAppBar(Label.registration),
         body: Form(
           key: _formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          autovalidateMode: AutovalidateMode.disabled,
           child: Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 50.0, vertical: 30.0),
