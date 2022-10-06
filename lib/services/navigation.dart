@@ -16,4 +16,8 @@ class Navigation {
   goToLogin() {
     context.goNamed(Routes.login);
   }
+
+  backToHome() {
+    context.goNamed(Routes.home);
+  }
 }

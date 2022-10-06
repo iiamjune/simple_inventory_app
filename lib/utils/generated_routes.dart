@@ -1,3 +1,4 @@
+import 'package:flutter_application_1/views/home.dart';
 import 'package:flutter_application_1/views/registration.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,7 +15,7 @@ class RouteGenerate {
         GoRoute(
           name: Routes.splash,
           path: '/',
-          builder: (context, state) => const Success(),
+          builder: (context, state) => const Splash(),
         ),
         GoRoute(
           name: Routes.register,
@@ -30,6 +31,11 @@ class RouteGenerate {
           name: Routes.success,
           path: '/success',
           builder: (context, state) => const Success(),
+        ),
+        GoRoute(
+          name: Routes.home,
+          path: '/home',
+          builder: (context, state) => const Home(),
         ),
       ]);
 }

@@ -2,5 +2,6 @@ class Routes {
   static const splash = "splash",
       register = "register",
       login = "login",
-      success = "success";
+      success = "success",
+      home = "home";
 }
