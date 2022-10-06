@@ -1,4 +1,5 @@
 import 'package:flutter_application_1/views/home.dart';
+import 'package:flutter_application_1/views/product.dart';
 import 'package:flutter_application_1/views/registration.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,5 +38,10 @@ class RouteGenerate {
           path: '/home',
           builder: (context, state) => const Home(),
         ),
+        GoRoute(
+          name: Routes.product,
+          path: '/product',
+          builder: (context, state) => const Product(),
+        )
       ]);
 }

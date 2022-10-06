@@ -20,4 +20,8 @@ class Navigation {
   backToHome() {
     context.goNamed(Routes.home);
   }
+
+  goToProduct() {
+    context.pushNamed(Routes.product);
+  }
 }

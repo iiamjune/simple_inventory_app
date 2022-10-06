@@ -10,7 +10,15 @@ class Label {
       alreadyHaveAnAccount = "Already have an account?",
       dontHaveAnAccount = "Don't have an account?",
       register = "Register",
-      continueButton = "Continue";
+      continueButton = "Continue",
+      id = "ID",
+      userID = "User ID",
+      productName = "Product Name",
+      imageLink = "Image Link",
+      description = "Description",
+      price = "Price",
+      edit = "Edit",
+      save = "Save";
 }
 
 class ErrorMessage {

@@ -97,6 +97,12 @@ class _HomeState extends State<Home> {
                     products[index].price,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
+                  onTap: (() async {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.setString("productID", products[index].id.toString());
+                    Navigation(context).goToProduct();
+                  }),
                 );
               },
               separatorBuilder: (context, index) =>

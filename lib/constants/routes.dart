@@ -3,5 +3,6 @@ class Routes {
       register = "register",
       login = "login",
       success = "success",
-      home = "home";
+      home = "home",
+      product = "product";
 }
