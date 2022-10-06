@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/models/product_list_model.dart';
 import 'package:flutter_application_1/services/logout_service.dart';
+import 'package:flutter_application_1/services/product_list_service.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../constants/labels.dart';
 import '../services/login_service.dart';
 import '../services/navigation.dart';
 
@@ -18,11 +21,11 @@ class _HomeState extends State<Home> {
   String? message;
   String? token;
   bool success = false;
+  List<ProductListModel> products = [];
+  bool isDataLoaded = false;
 
-  void getData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    data =
-        (await LogoutService(context).logout(token: prefs.getString("token")!));
+  void getLogoutData() async {
+    data = (await LogoutService(context).logout(token: token!));
     setState(() {
       if (data!.containsKey("message")) {
         if (data?["message"] == "Logged out") {
@@ -34,6 +37,21 @@ class _HomeState extends State<Home> {
         }
       }
     });
+  }
+
+  void getProductsData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString("token");
+    products = (await ProductListService(context).getProducts(token: token!))!;
+    setState(() {
+      isDataLoaded = true;
+    });
+  }
+
+  @override
+  void initState() {
+    getProductsData();
+    super.initState();
   }
 
   @override
@@ -48,7 +66,7 @@ class _HomeState extends State<Home> {
               onPressed: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 token = prefs.getString("token");
-                getData();
+                getLogoutData();
 
                 Future.delayed(Duration(seconds: 2)).then((value) {
                   if (success) {
@@ -64,9 +82,26 @@ class _HomeState extends State<Home> {
               icon: Icon(Icons.power_settings_new)),
         ],
       ),
-      body: Center(
-        child: Text("HOME PAGE"),
-      ),
+      body: Visibility(
+          visible: isDataLoaded,
+          replacement: Center(child: CircularProgressIndicator()),
+          child: ListView.separated(
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: CircleAvatar(
+                      backgroundColor: Colors.indigo[600],
+                      backgroundImage: NetworkImage(products[index].imageLink)),
+                  title: Text(products[index].name),
+                  subtitle: Text(products[index].updatedAt.toIso8601String()),
+                  trailing: Text(
+                    products[index].price,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) =>
+                  Divider(color: Colors.indigo[600], thickness: 1.0),
+              itemCount: products.length)),
     );
   }
 }
