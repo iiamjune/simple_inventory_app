@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/services/product_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/labels.dart';
+import '../models/product_model.dart';
 
 class Product extends StatefulWidget {
   const Product({super.key, this.appBarTitle});
@@ -15,13 +18,32 @@ class _ProductState extends State<Product> {
   bool isEditing = false;
   final TextEditingController idController = TextEditingController();
   final TextEditingController userIDController = TextEditingController();
-  Map<String, dynamic> productData = {};
+  final TextEditingController productNameController = TextEditingController();
+  final TextEditingController imageLinkController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController priceController = TextEditingController();
+  ProductModel? productData;
+  String? token;
+  String? productID;
 
-  void initData() async {}
+  void initData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString("token");
+    productID = prefs.getString("productID");
+    productData = (await ProductService(context)
+        .getProducts(token: token!, productID: productID!));
+    idController.text = productData?.id.toString() ?? "";
+    userIDController.text = productData?.userId.toString() ?? "";
+    productNameController.text = productData?.name ?? "";
+    imageLinkController.text = productData?.imageLink ?? "";
+    descriptionController.text = productData?.description ?? "";
+    priceController.text = productData?.price ?? "";
+    setState(() {});
+  }
 
   @override
   void initState() {
-    // TODO: implement initState
+    initData();
     super.initState();
   }
 
@@ -50,16 +72,19 @@ class _ProductState extends State<Product> {
                       CircleAvatar(
                         radius: 50.0,
                         backgroundColor: Colors.indigo[600],
-                        backgroundImage: null,
+                        backgroundImage: productData?.imageLink != null
+                            ? NetworkImage(productData!.imageLink)
+                            : null,
+                        // backgroundImage: null,
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text("Created at:"),
-                          Text(""),
-                          Text("Updated at:"),
-                          Text(""),
+                          Text(Label.createdAt),
+                          Text(productData?.createdAt.toIso8601String() ?? ""),
+                          Text(Label.updatedAt),
+                          Text(productData?.updatedAt.toIso8601String() ?? ""),
                         ],
                       ),
                     ],
@@ -95,6 +120,7 @@ class _ProductState extends State<Product> {
                         SizedBox(height: 20.0),
                         TextFormField(
                           enabled: isEditing,
+                          controller: productNameController,
                           onSaved: (value) {},
                           decoration: const InputDecoration(
                               border: OutlineInputBorder(),
@@ -103,6 +129,7 @@ class _ProductState extends State<Product> {
                         SizedBox(height: 20.0),
                         TextFormField(
                           enabled: isEditing,
+                          controller: imageLinkController,
                           onSaved: (value) {},
                           decoration: const InputDecoration(
                               border: OutlineInputBorder(),
@@ -111,6 +138,7 @@ class _ProductState extends State<Product> {
                         SizedBox(height: 20.0),
                         TextFormField(
                           enabled: isEditing,
+                          controller: descriptionController,
                           onSaved: (value) {},
                           decoration: const InputDecoration(
                               border: OutlineInputBorder(),
@@ -119,6 +147,7 @@ class _ProductState extends State<Product> {
                         SizedBox(height: 20.0),
                         TextFormField(
                           enabled: isEditing,
+                          controller: priceController,
                           keyboardType: TextInputType.number,
                           onSaved: (value) {},
                           decoration: const InputDecoration(
