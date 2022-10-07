@@ -21,7 +21,8 @@ class Label {
       save = "Save",
       createdAt = "Created at:",
       updatedAt = "Updated at:",
-      published = "Published";
+      published = "Published",
+      add = "Add";
 }
 
 class ErrorMessage {

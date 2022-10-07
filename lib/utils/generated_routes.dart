@@ -1,3 +1,4 @@
+import 'package:flutter_application_1/views/add_product.dart';
 import 'package:flutter_application_1/views/home.dart';
 import 'package:flutter_application_1/views/product.dart';
 import 'package:flutter_application_1/views/registration.dart';
@@ -42,6 +43,11 @@ class RouteGenerate {
           name: Routes.product,
           path: '/product',
           builder: (context, state) => const Product(),
+        ),
+        GoRoute(
+          name: Routes.addProduct,
+          path: '/add_product',
+          builder: (context, state) => const AddProduct(),
         )
       ]);
 }

@@ -79,4 +79,33 @@ class ProductService {
       return json.decode(response.body);
     }
   }
+
+  Future<Map<String, dynamic>?> addProduct(
+      {required String token,
+      required String name,
+      required String imageLink,
+      required String description,
+      required String price,
+      required bool isPublished}) async {
+    var client = http.Client();
+    var response = await client.post(url(endpoint: EndPoint.products),
+        headers: await _header(token: token),
+        body: productModelToJson(ProductModel(
+          name: name,
+          imageLink: imageLink,
+          description: description,
+          price: price,
+          isPublished: isPublished,
+        )));
+
+    if (response.statusCode == 201) {
+      print(json.decode(response.body));
+      return json.decode(response.body);
+    } else {
+      //TODO: Error Validation for existing email, and the password confirmation does not match
+      print("FAILED TO ADD");
+      print(json.decode(response.body));
+      return json.decode(response.body);
+    }
+  }
 }

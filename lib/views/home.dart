@@ -82,6 +82,13 @@ class _HomeState extends State<Home> {
               icon: Icon(Icons.power_settings_new)),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        backgroundColor: Colors.indigo[600],
+        onPressed: () {
+          Navigation(context).goToAddProduct();
+        },
+      ),
       body: Visibility(
           visible: isDataLoaded,
           replacement: Center(child: CircularProgressIndicator()),

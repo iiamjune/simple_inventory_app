@@ -24,4 +24,8 @@ class Navigation {
   goToProduct() {
     context.goNamed(Routes.product);
   }
+
+  goToAddProduct() {
+    context.goNamed(Routes.addProduct);
+  }
 }
