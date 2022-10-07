@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_application_1/models/product_model.dart';
+import 'package:flutter_application_1/models/product_data_model.dart';
 import 'package:http/http.dart' as http;
 
 import '../constants/endpoints.dart';
 import '../constants/globals.dart';
+import '../models/product_model.dart';
 
 class ProductService {
   ProductService(this.context);
@@ -28,7 +31,7 @@ class ProductService {
     return Uri.parse(fullString);
   }
 
-  Future<ProductModel?> getProducts(
+  Future<ProductDataModel?> getProduct(
       {required String token, required String productID}) async {
     var client = http.Client();
     var response = await client.get(
@@ -38,11 +41,42 @@ class ProductService {
 
     if (response.statusCode == 200) {
       print(response.body);
-      return productModelFromJson(response.body);
+      return productDataModelFromJson(response.body);
     } else {
       //TODO: Error Handling
       print("FETCHING PRODUCT DETAILS FAILED");
       print(response.body);
+    }
+  }
+
+  Future<Map<String, dynamic>?> editProduct(
+      {required String token,
+      required String productID,
+      required String name,
+      required String imageLink,
+      required String description,
+      required String price,
+      required bool isPublished}) async {
+    var client = http.Client();
+    var response =
+        await client.put(url(endpoint: EndPoint.products, query: productID),
+            headers: await _header(token: token),
+            body: productModelToJson(ProductModel(
+              name: name,
+              imageLink: imageLink,
+              description: description,
+              price: price,
+              isPublished: isPublished,
+            )));
+
+    if (response.statusCode == 201) {
+      print(json.decode(response.body));
+      return json.decode(response.body);
+    } else {
+      //TODO: Error Validation for existing email, and the password confirmation does not match
+      print("FAILED TO EDIT");
+      print(json.decode(response.body));
+      return json.decode(response.body);
     }
   }
 }

@@ -22,6 +22,6 @@ class Navigation {
   }
 
   goToProduct() {
-    context.pushNamed(Routes.product);
+    context.goNamed(Routes.product);
   }
 }

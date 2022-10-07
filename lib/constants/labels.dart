@@ -20,7 +20,8 @@ class Label {
       edit = "Edit",
       save = "Save",
       createdAt = "Created at:",
-      updatedAt = "Updated at:";
+      updatedAt = "Updated at:",
+      published = "Published";
 }
 
 class ErrorMessage {

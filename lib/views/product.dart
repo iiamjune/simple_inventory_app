@@ -3,7 +3,8 @@ import 'package:flutter_application_1/services/product_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/labels.dart';
-import '../models/product_model.dart';
+import '../models/product_data_model.dart';
+import '../services/navigation.dart';
 
 class Product extends StatefulWidget {
   const Product({super.key, this.appBarTitle});
@@ -22,23 +23,56 @@ class _ProductState extends State<Product> {
   final TextEditingController imageLinkController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
-  ProductModel? productData;
+  ProductDataModel? productData;
   String? token;
   String? productID;
+  List<bool> dropdownItems = [true, false];
+  bool isPublished = false;
+  Map<String, dynamic>? data = {};
+  bool success = false;
+  String? errorMessage;
 
   void initData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString("token");
     productID = prefs.getString("productID");
     productData = (await ProductService(context)
-        .getProducts(token: token!, productID: productID!));
+        .getProduct(token: token!, productID: productID!));
     idController.text = productData?.id.toString() ?? "";
     userIDController.text = productData?.userId.toString() ?? "";
     productNameController.text = productData?.name ?? "";
     imageLinkController.text = productData?.imageLink ?? "";
     descriptionController.text = productData?.description ?? "";
     priceController.text = productData?.price ?? "";
+    isPublished = publishStatus(productData?.isPublished ?? 0);
     setState(() {});
+  }
+
+  void getData() async {
+    data = await ProductService(context).editProduct(
+      token: token!,
+      productID: productID!,
+      name: productNameController.text,
+      imageLink: imageLinkController.text,
+      description: descriptionController.text,
+      price: priceController.text,
+      isPublished: isPublished,
+    );
+    setState(() {
+      if (data!.containsKey("errors")) {
+        success = false;
+        errorMessage = data?["message"];
+      } else {
+        success = true;
+      }
+    });
+  }
+
+  bool publishStatus(int isPublished) {
+    if (isPublished == 1) {
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -56,6 +90,12 @@ class _ProductState extends State<Product> {
           backgroundColor: Colors.indigo[600],
           title: Text(widget.appBarTitle ?? "Product"),
           centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigation(context).backToHome();
+            },
+          ),
         ),
         body: Form(
             key: _formKey,
@@ -70,12 +110,11 @@ class _ProductState extends State<Product> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       CircleAvatar(
-                        radius: 50.0,
+                        radius: 40.0,
                         backgroundColor: Colors.indigo[600],
                         backgroundImage: productData?.imageLink != null
                             ? NetworkImage(productData!.imageLink)
                             : null,
-                        // backgroundImage: null,
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -154,6 +193,30 @@ class _ProductState extends State<Product> {
                               border: OutlineInputBorder(),
                               labelText: Label.price),
                         ),
+                        SizedBox(height: 20.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: DropdownButtonFormField<bool>(
+                                value: isPublished,
+                                decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: Label.published),
+                                items: dropdownItems
+                                    .map((item) => DropdownMenuItem<bool>(
+                                          value: item,
+                                          child: Text(item.toString()),
+                                        ))
+                                    .toList(),
+                                onChanged: isEditing
+                                    ? (item) =>
+                                        setState(() => isPublished = item!)
+                                    : null,
+                              ),
+                            )
+                          ],
+                        )
                       ],
                     ),
                   ),
@@ -164,7 +227,27 @@ class _ProductState extends State<Product> {
                       shape: MaterialStateProperty.all(RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0))),
                     ),
-                    onPressed: () {},
+                    onPressed: () async {
+                      if (!isEditing) {
+                        isEditing = true;
+                      } else {
+                        isEditing = false;
+                        getData();
+
+                        Future.delayed(Duration(seconds: 2)).then((value) {
+                          if (success) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("Edit successful")));
+                          } else {
+                            errorMessage != null
+                                ? ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(errorMessage!)))
+                                : null;
+                          }
+                        });
+                      }
+                      setState(() {});
+                    },
                     child: Padding(
                       padding: EdgeInsets.all(20.0),
                       child: Text(
