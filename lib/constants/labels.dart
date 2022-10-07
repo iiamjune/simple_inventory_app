@@ -18,7 +18,9 @@ class Label {
       description = "Description",
       price = "Price",
       edit = "Edit",
-      save = "Save";
+      save = "Save",
+      createdAt = "Created at:",
+      updatedAt = "Updated at:";
 }
 
 class ErrorMessage {
