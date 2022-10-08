@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/product_list_model.dart';
 import 'package:flutter_application_1/services/logout_service.dart';
 import 'package:flutter_application_1/services/product_list_service.dart';
+import 'package:flutter_application_1/services/product_service.dart';
+import 'package:flutter_application_1/widgets/dialog.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,23 +19,24 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Map<String, dynamic>? data = {};
+  Map<String, dynamic>? logoutData = {};
   String? message;
   String? token;
   bool success = false;
   List<ProductListModel> products = [];
   bool isDataLoaded = false;
+  int? deleteData;
 
   void getLogoutData() async {
-    data = (await LogoutService(context).logout(token: token!));
+    logoutData = (await LogoutService(context).logout(token: token!));
     setState(() {
-      if (data!.containsKey("message")) {
-        if (data?["message"] == "Logged out") {
+      if (logoutData!.containsKey("message")) {
+        if (logoutData?["message"] == "Logged out") {
           success = true;
-          message = data?["message"];
+          message = logoutData?["message"];
         } else {
           success = false;
-          message = data?["message"];
+          message = logoutData?["message"];
         }
       }
     });
@@ -46,6 +49,27 @@ class _HomeState extends State<Home> {
     setState(() {
       isDataLoaded = true;
     });
+  }
+
+  Future<bool> getDeleteData(result, index) async {
+    bool deleteResult = false;
+    if (result) {
+      deleteData = await ProductService(context).deleteProduct(
+          token: token!, productID: products[index].id.toString());
+
+      String message;
+      if (deleteData != null && deleteData == 1) {
+        deleteResult = true;
+        message = 'Delete successful';
+      } else {
+        deleteResult = false;
+        message = 'Delete unsuccessful';
+      }
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+    }
+    return deleteResult;
   }
 
   @override
@@ -92,28 +116,63 @@ class _HomeState extends State<Home> {
       body: Visibility(
           visible: isDataLoaded,
           replacement: Center(child: CircularProgressIndicator()),
-          child: ListView.separated(
+          child: ListView.builder(
               itemBuilder: (context, index) {
-                return ListTile(
-                  leading: CircleAvatar(
-                      backgroundColor: Colors.indigo[600],
-                      backgroundImage: NetworkImage(products[index].imageLink)),
-                  title: Text(products[index].name),
-                  subtitle: Text(products[index].updatedAt.toIso8601String()),
-                  trailing: Text(
-                    products[index].price,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                return Dismissible(
+                  key: UniqueKey(),
+                  direction: DismissDirection.startToEnd,
+                  onDismissed: (direction) {
+                    getProductsData();
+                  },
+                  confirmDismiss: (direction) async {
+                    final result = await showDialog(
+                        context: context,
+                        builder: (_) => ConfirmDialog(
+                              title: Label.warning,
+                              content: Label.areYouSureDelete,
+                            ));
+
+                    getDeleteData(result, index);
+                    return result;
+                  },
+                  background: Container(
+                    color: Colors.red,
+                    padding: EdgeInsets.only(left: 16.0),
+                    child: Align(
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                      ),
+                      alignment: Alignment.centerLeft,
+                    ),
                   ),
-                  onTap: (() async {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    prefs.setString("productID", products[index].id.toString());
-                    Navigation(context).goToProduct();
-                  }),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: CircleAvatar(
+                            backgroundColor: Colors.indigo[600],
+                            backgroundImage:
+                                NetworkImage(products[index].imageLink)),
+                        title: Text(products[index].name),
+                        subtitle:
+                            Text(products[index].updatedAt.toIso8601String()),
+                        trailing: Text(
+                          products[index].price,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        onTap: (() async {
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          prefs.setString(
+                              "productID", products[index].id.toString());
+                          Navigation(context).goToProduct();
+                        }),
+                      ),
+                      Divider(color: Colors.indigo[600], thickness: 1.0),
+                    ],
+                  ),
                 );
               },
-              separatorBuilder: (context, index) =>
-                  Divider(color: Colors.indigo[600], thickness: 1.0),
               itemCount: products.length)),
     );
   }

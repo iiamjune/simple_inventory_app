@@ -22,7 +22,11 @@ class Label {
       createdAt = "Created at:",
       updatedAt = "Updated at:",
       published = "Published",
-      add = "Add";
+      add = "Add",
+      yes = "Yes",
+      no = "No",
+      warning = "Warning",
+      areYouSureDelete = "Are you sure you want to delete this note?";
 }
 
 class ErrorMessage {

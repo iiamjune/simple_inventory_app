@@ -108,4 +108,25 @@ class ProductService {
       return json.decode(response.body);
     }
   }
+
+  Future<int> deleteProduct({
+    required String token,
+    required String productID,
+  }) async {
+    var client = http.Client();
+    var response = await client.delete(
+      url(endpoint: EndPoint.products, query: productID),
+      headers: await _header(token: token),
+    );
+
+    if (response.statusCode == 200) {
+      print(json.decode(response.body));
+      return json.decode(response.body);
+    } else {
+      //TODO: Error Validation for existing email, and the password confirmation does not match
+      print("FAILED TO EDIT");
+      print(json.decode(response.body));
+      return json.decode(response.body);
+    }
+  }
 }
