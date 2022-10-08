@@ -154,6 +154,7 @@ class _AddProductState extends State<AddProduct> {
                         if (success) {
                           ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text("Add successful")));
+                          Navigation(context).backToHome();
                         } else {
                           errorMessage != null
                               ? ScaffoldMessenger.of(context).showSnackBar(
