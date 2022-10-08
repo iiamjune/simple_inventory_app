@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/product_service.dart';
+import 'package:flutter_application_1/widgets/button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/labels.dart';
@@ -7,8 +8,7 @@ import '../models/product_data_model.dart';
 import '../services/navigation.dart';
 
 class Product extends StatefulWidget {
-  const Product({super.key, this.appBarTitle});
-  final String? appBarTitle;
+  const Product({super.key});
 
   @override
   State<Product> createState() => _ProductState();
@@ -31,6 +31,7 @@ class _ProductState extends State<Product> {
   Map<String, dynamic>? data = {};
   bool success = false;
   String? errorMessage;
+  String appbarTitle = "Single Product";
 
   void initData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -88,7 +89,7 @@ class _ProductState extends State<Product> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Colors.indigo[600],
-          title: Text(widget.appBarTitle ?? "Product"),
+          title: Text(appbarTitle),
           centerTitle: true,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -220,18 +221,14 @@ class _ProductState extends State<Product> {
                       ],
                     ),
                   ),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(Colors.indigo[600]),
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0))),
-                    ),
+                  MainButton(
                     onPressed: () async {
                       if (!isEditing) {
                         isEditing = true;
+                        appbarTitle = "Edit Product";
                       } else {
                         isEditing = false;
+                        appbarTitle = "Single Product";
                         getData();
 
                         Future.delayed(Duration(seconds: 2)).then((value) {
@@ -248,14 +245,7 @@ class _ProductState extends State<Product> {
                       }
                       setState(() {});
                     },
-                    child: Padding(
-                      padding: EdgeInsets.all(20.0),
-                      child: Text(
-                        isEditing ? Label.save : Label.edit,
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
+                    buttonLabel: isEditing ? Label.save : Label.edit,
                   ),
                 ],
               ),

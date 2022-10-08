@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/widgets/button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/labels.dart';
@@ -140,13 +141,7 @@ class _AddProductState extends State<AddProduct> {
                       ],
                     ),
                   ),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(Colors.indigo[600]),
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0))),
-                    ),
+                  MainButton(
                     onPressed: () async {
                       getData();
 
@@ -164,14 +159,7 @@ class _AddProductState extends State<AddProduct> {
                       });
                       setState(() {});
                     },
-                    child: Padding(
-                      padding: EdgeInsets.all(20.0),
-                      child: Text(
-                        Label.add,
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
+                    buttonLabel: Label.add,
                   ),
                 ],
               ),

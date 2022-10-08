@@ -83,7 +83,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.indigo[600],
-        title: Text("Home"),
+        title: Text("Products List"),
         centerTitle: true,
         actions: <Widget>[
           IconButton(

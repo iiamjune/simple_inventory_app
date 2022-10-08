@@ -2,7 +2,10 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/registration_service.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
+import 'package:flutter_application_1/widgets/button.dart';
+import 'package:flutter_application_1/widgets/footer.dart';
 import 'package:flutter_application_1/widgets/popup.dart';
+import 'package:flutter_application_1/widgets/textformfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/labels.dart';
@@ -27,7 +30,7 @@ class _RegistrationState extends State<Registration> {
   String? token;
   bool success = false;
 
-  void getData() async {
+  void getRegistrationData() async {
     data = (await RegistrationService(context)
         .register(name!, email!, password!, passwordConfirmation!));
     setState(() {
@@ -74,7 +77,8 @@ class _RegistrationState extends State<Registration> {
                   reverse: true,
                   child: Column(
                     children: [
-                      TextFormField(
+                      StandardTextField(
+                        label: Label.name,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return ErrorMessage.enterYourName;
@@ -84,12 +88,10 @@ class _RegistrationState extends State<Registration> {
                         onSaved: (value) {
                           name = value;
                         },
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: Label.name),
                       ),
-                      SizedBox(height: 20.0),
-                      TextFormField(
+                      const SizedBox(height: 20.0),
+                      StandardTextField(
+                        label: Label.email,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return ErrorMessage.enterAnEmailAddress;
@@ -101,13 +103,10 @@ class _RegistrationState extends State<Registration> {
                         onSaved: (value) {
                           email = value;
                         },
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: Label.email),
                       ),
-                      SizedBox(height: 20.0),
-                      TextFormField(
-                        obscureText: true,
+                      const SizedBox(height: 20.0),
+                      PasswordTextField(
+                        label: Label.password,
                         controller: passwordController,
                         onSaved: (value) {
                           password = value;
@@ -121,14 +120,10 @@ class _RegistrationState extends State<Registration> {
                           }
                           return null;
                         },
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: Label.password,
-                        ),
                       ),
                       SizedBox(height: 20.0),
-                      TextFormField(
-                        obscureText: true,
+                      PasswordTextField(
+                        label: Label.passwordConfirmation,
                         onSaved: (value) {
                           passwordConfirmation = value;
                         },
@@ -141,25 +136,15 @@ class _RegistrationState extends State<Registration> {
                           }
                           return null;
                         },
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: Label.passwordConfirmation,
-                        ),
                       ),
                     ],
                   ),
                 ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.indigo[600]),
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0))),
-                  ),
+                MainButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      getData();
+                      getRegistrationData();
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
 
@@ -185,40 +170,18 @@ class _RegistrationState extends State<Registration> {
                               Text("Please make sure your input is valid")));
                     }
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Text(
-                      Label.createAccount,
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                  buttonLabel: Label.createAccount,
                 ),
                 Divider(
                   color: Colors.grey,
                   thickness: 1.0,
                 ),
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  alignment: WrapAlignment.center,
-                  direction: Axis.vertical,
-                  spacing: -10.0,
-                  children: <Widget>[
-                    Text(
-                      Label.alreadyHaveAnAccount,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigation(context).goToLogin();
-                      },
-                      child: Text(
-                        Label.login,
-                        style: TextStyle(color: Colors.indigo[600]),
-                      ),
-                    ),
-                  ],
+                PageFooter(
+                  label: Label.alreadyHaveAnAccount,
+                  navigation: () {
+                    Navigation(context).goToLogin();
+                  },
+                  buttonLabel: Label.login,
                 ),
               ],
             ),

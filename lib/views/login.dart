@@ -2,6 +2,9 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/login_service.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
+import 'package:flutter_application_1/widgets/button.dart';
+import 'package:flutter_application_1/widgets/footer.dart';
+import 'package:flutter_application_1/widgets/textformfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/labels.dart';
@@ -63,51 +66,36 @@ class _LoginState extends State<Login> {
                   reverse: true,
                   child: Column(
                     children: [
-                      TextFormField(
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return ErrorMessage.enterAnEmailAddress;
-                          }
-                          return EmailValidator.validate(value)
-                              ? null
-                              : ErrorMessage.enterAValidEmailAddress;
-                        },
-                        onSaved: (value) {
-                          email = value;
-                        },
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: Label.email),
-                      ),
+                      StandardTextField(
+                          label: Label.email,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return ErrorMessage.enterAnEmailAddress;
+                            }
+                            return EmailValidator.validate(value)
+                                ? null
+                                : ErrorMessage.enterAValidEmailAddress;
+                          },
+                          onSaved: (value) {
+                            email = value;
+                          }),
                       SizedBox(height: 20.0),
-                      TextFormField(
-                        obscureText: true,
-                        controller: passwordController,
-                        onSaved: (value) {
-                          password = value;
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return ErrorMessage.enterAPassword;
-                          }
-                          return null;
-                        },
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: Label.password,
-                        ),
-                      ),
+                      PasswordTextField(
+                          label: Label.password,
+                          onSaved: (value) {
+                            password = value;
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return ErrorMessage.enterAPassword;
+                            }
+                            return null;
+                          }),
                       SizedBox(height: 20.0),
                     ],
                   ),
                 ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.indigo[600]),
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0))),
-                  ),
+                MainButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
@@ -135,41 +123,19 @@ class _LoginState extends State<Login> {
                               Text("Please make sure your input is valid")));
                     }
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Text(
-                      Label.login,
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                  buttonLabel: Label.login,
                 ),
                 Divider(
                   color: Colors.grey,
                   thickness: 1.0,
                 ),
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  alignment: WrapAlignment.center,
-                  direction: Axis.vertical,
-                  spacing: -10.0,
-                  children: <Widget>[
-                    Text(
-                      Label.dontHaveAnAccount,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigation(context).goToRegistration();
-                      },
-                      child: Text(
-                        Label.register,
-                        style: TextStyle(color: Colors.indigo[600]),
-                      ),
-                    ),
-                  ],
-                ),
+                PageFooter(
+                  label: Label.dontHaveAnAccount,
+                  navigation: () {
+                    Navigation(context).goToRegistration();
+                  },
+                  buttonLabel: Label.register,
+                )
               ],
             ),
           ),
