@@ -1,5 +1,9 @@
 import 'dart:convert';
 
+/// It converts the LoginModel object to a JSON string.
+///
+/// Args:
+///   data (LoginModel): The data to be converted to JSON.
 String loginModelToJson(LoginModel data) => json.encode(data.toJson());
 
 class LoginModel {
@@ -15,14 +19,4 @@ class LoginModel {
         "email": email,
         "password": password,
       };
-}
-
-class LoginResponse {
-  LoginResponse({
-    required this.user,
-    required this.token,
-  });
-
-  Map<String, dynamic> user;
-  String token;
 }

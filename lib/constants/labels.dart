@@ -26,16 +26,7 @@ class Label {
       yes = "Yes",
       no = "No",
       warning = "Warning",
-      areYouSureDelete = "Are you sure you want to delete this note?";
-}
-
-class ErrorMessage {
-  static const enterYourName = "Enter your name",
-      enterAnEmailAddress = "Enter an email address",
-      enterAValidEmailAddress = "Enter a valid email address",
-      enterAPassword = "Enter a password",
-      useEightCharactersOrMore = "Use 8 characters or more for your password",
-      confirmYourPassword = "Confirm your password",
-      thosePasswordsDidntMatch =
-          "Those passwords didn't match. Please try again.";
+      areYouSureDelete = "Are you sure you want to delete this note?",
+      registrationSuccessful = "Registration successful",
+      productsList = "Products List";
 }

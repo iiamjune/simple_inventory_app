@@ -4,11 +4,9 @@ import 'package:flutter_application_1/services/logout_service.dart';
 import 'package:flutter_application_1/services/product_list_service.dart';
 import 'package:flutter_application_1/services/product_service.dart';
 import 'package:flutter_application_1/widgets/dialog.dart';
-import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/labels.dart';
-import '../services/login_service.dart';
 import '../services/navigation.dart';
 
 class Home extends StatefulWidget {
@@ -27,6 +25,7 @@ class _HomeState extends State<Home> {
   bool isDataLoaded = false;
   int? deleteData;
 
+  /// It gets the logout data from the server and sets the state of the widget
   void getLogoutData() async {
     logoutData = (await LogoutService(context).logout(token: token!));
     setState(() {
@@ -42,6 +41,8 @@ class _HomeState extends State<Home> {
     });
   }
 
+  /// It gets the token from the shared preferences and then calls the getProducts function from the
+  /// ProductListService class
   void getProductsData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString("token");
@@ -51,6 +52,15 @@ class _HomeState extends State<Home> {
     });
   }
 
+  /// It takes in a result and an index, and if the result is true, it will delete the product at the
+  /// index
+  ///
+  /// Args:
+  ///   result: The result of the confirmation dialog.
+  ///   index: The index of the product in the list
+  ///
+  /// Returns:
+  ///   A Future<bool>
   Future<bool> getDeleteData(result, index) async {
     bool deleteResult = false;
     if (result) {
@@ -72,6 +82,24 @@ class _HomeState extends State<Home> {
     return deleteResult;
   }
 
+  /// It handles logout process
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString("token");
+    getLogoutData();
+
+    Future.delayed(const Duration(seconds: 2)).then((value) {
+      if (success) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message!)));
+        Navigation(context).goToLogin();
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message!)));
+      }
+    });
+  }
+
   @override
   void initState() {
     getProductsData();
@@ -83,39 +111,23 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.indigo[600],
-        title: Text("Products List"),
+        title: const Text(Label.productsList),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
-              onPressed: () async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                token = prefs.getString("token");
-                getLogoutData();
-
-                Future.delayed(Duration(seconds: 2)).then((value) {
-                  if (success) {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text(message!)));
-                    Navigation(context).goToLogin();
-                  } else {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text(message!)));
-                  }
-                });
-              },
-              icon: Icon(Icons.power_settings_new)),
+            onPressed: logout,
+            icon: const Icon(Icons.power_settings_new),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
         backgroundColor: Colors.indigo[600],
-        onPressed: () {
-          Navigation(context).goToAddProduct();
-        },
+        onPressed: () => Navigation(context).goToAddProduct(),
+        child: const Icon(Icons.add),
       ),
       body: Visibility(
           visible: isDataLoaded,
-          replacement: Center(child: CircularProgressIndicator()),
+          replacement: const Center(child: CircularProgressIndicator()),
           child: ListView.builder(
               itemBuilder: (context, index) {
                 return Dismissible(
@@ -127,7 +139,7 @@ class _HomeState extends State<Home> {
                   confirmDismiss: (direction) async {
                     final result = await showDialog(
                         context: context,
-                        builder: (_) => ConfirmDialog(
+                        builder: (_) => const ConfirmDialog(
                               title: Label.warning,
                               content: Label.areYouSureDelete,
                             ));
@@ -137,13 +149,13 @@ class _HomeState extends State<Home> {
                   },
                   background: Container(
                     color: Colors.red,
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: Align(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: const Align(
+                      alignment: Alignment.centerLeft,
                       child: Icon(
                         Icons.delete,
                         color: Colors.white,
                       ),
-                      alignment: Alignment.centerLeft,
                     ),
                   ),
                   child: Column(
@@ -158,15 +170,15 @@ class _HomeState extends State<Home> {
                             Text(products[index].updatedAt.toIso8601String()),
                         trailing: Text(
                           products[index].price,
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        onTap: (() async {
+                        onTap: () async {
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();
                           prefs.setString(
                               "productID", products[index].id.toString());
                           Navigation(context).goToProduct();
-                        }),
+                        },
                       ),
                       Divider(color: Colors.indigo[600], thickness: 1.0),
                     ],

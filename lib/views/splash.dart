@@ -12,7 +12,7 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
   initData() {
-    Future.delayed(Duration(seconds: 3))
+    Future.delayed(const Duration(seconds: 3))
         .then((value) => Navigation(context).goToRegistration());
   }
 

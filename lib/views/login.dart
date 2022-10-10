@@ -1,4 +1,3 @@
-import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/login_service.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
@@ -9,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/labels.dart';
 import '../services/navigation.dart';
-import '../widgets/popup.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -20,26 +18,95 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   String? email;
   String? password;
   Map<String, dynamic>? data = {};
+  Map<String, dynamic>? errors = {};
   String? errorMessage;
+  String? emailError;
+  String? passwordError;
   String? token;
   bool success = false;
 
-  void getData() async {
-    data = (await LoginService(context).login(email!, password!));
+  /// It's making an API call to a server, and if the response contains an error, it will store the error
+  /// message in a variable
+  void getLoginData() async {
+    data = (await LoginService(context)
+        .login(emailController.text, passwordController.text));
     setState(() {
       if (data!.containsKey("message")) {
         success = false;
         errorMessage = data?["message"];
+        emailError = null;
+        passwordError = null;
+        errors = null;
+        if (data!.containsKey("errors")) {
+          errors = data?["errors"];
+        }
+        // errors = data?["errors"];
       }
       if (data!.containsKey("token")) {
         success = true;
         token = data?["token"];
       }
     });
+    setState(() {
+      if (errors != null) {
+        storeEmailError(errors);
+        storePasswordError(errors);
+      }
+    });
+  }
+
+  /// It waits for 2 seconds, then checks if the login was successful, if it was, it saves the token to
+  /// the shared preferences and navigates back to the home screen, if it wasn't, it shows an error
+  /// message
+  void loginProcess() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Future.delayed(const Duration(seconds: 2)).then((value) {
+      if (success) {
+        prefs.setString("token", token!);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Token: ${token!}")));
+        Navigation(context).backToHome();
+      } else {
+        errorMessage != null
+            ? ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(errorMessage!)))
+            : null;
+      }
+    });
+  }
+
+  /// It gets login data and then processes the login.
+  void login() {
+    getLoginData();
+    loginProcess();
+  }
+
+  /// If the errors map contains a key called email, then set the emailError variable to the first
+  /// element of the list that is the value of the email key
+  ///
+  /// Args:
+  ///   errors (Map<String, dynamic>): The errors returned from the API.
+  void storeEmailError(Map<String, dynamic>? errors) {
+    if (errors!.containsKey("email")) {
+      emailError = errors["email"][0];
+    }
+  }
+
+  /// If the errors map contains a key called password, then set the passwordError variable to the first
+  /// element of the password key's value
+  ///
+  /// Args:
+  ///   errors (Map<String, dynamic>): The errors returned from the server.
+  void storePasswordError(Map<String, dynamic>? errors) {
+    if (errors!.containsKey("password")) {
+      passwordError = errors["password"][0];
+    }
   }
 
   @override
@@ -67,65 +134,25 @@ class _LoginState extends State<Login> {
                   child: Column(
                     children: [
                       StandardTextField(
-                          label: Label.email,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return ErrorMessage.enterAnEmailAddress;
-                            }
-                            return EmailValidator.validate(value)
-                                ? null
-                                : ErrorMessage.enterAValidEmailAddress;
-                          },
-                          onSaved: (value) {
-                            email = value;
-                          }),
-                      SizedBox(height: 20.0),
+                        label: Label.email,
+                        controller: emailController,
+                        errorText: emailError,
+                      ),
+                      const SizedBox(height: 20.0),
                       PasswordTextField(
-                          label: Label.password,
-                          onSaved: (value) {
-                            password = value;
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return ErrorMessage.enterAPassword;
-                            }
-                            return null;
-                          }),
-                      SizedBox(height: 20.0),
+                        label: Label.password,
+                        controller: passwordController,
+                        errorText: passwordError,
+                      ),
+                      const SizedBox(height: 20.0),
                     ],
                   ),
                 ),
                 MainButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      getData();
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-
-                      Future.delayed(Duration(seconds: 2)).then((value) {
-                        print(success);
-                        if (success) {
-                          prefs.setString("token", token!);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Token: ${token!}")));
-                          Navigation(context).backToHome();
-                        } else {
-                          errorMessage != null
-                              ? ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(errorMessage!)))
-                              : null;
-                        }
-                      });
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content:
-                              Text("Please make sure your input is valid")));
-                    }
-                  },
+                  onPressed: login,
                   buttonLabel: Label.login,
                 ),
-                Divider(
+                const Divider(
                   color: Colors.grey,
                   thickness: 1.0,
                 ),

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
 class StandardTextField extends StatefulWidget {
-  const StandardTextField(
-      {super.key,
-      required this.label,
-      required this.validator,
-      required this.onSaved});
+  const StandardTextField({
+    super.key,
+    required this.label,
+    this.controller,
+    this.errorText,
+  });
   final String? label;
-  final String? Function(String?)? validator;
-  final void Function(String?)? onSaved;
+  final TextEditingController? controller;
+  final String? errorText;
 
   @override
   State<StandardTextField> createState() => _StandardTextFieldState();
@@ -18,10 +19,11 @@ class _StandardTextFieldState extends State<StandardTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      validator: widget.validator,
-      onSaved: widget.onSaved,
+      controller: widget.controller,
       decoration: InputDecoration(
-          border: const OutlineInputBorder(), labelText: widget.label),
+          border: const OutlineInputBorder(),
+          labelText: widget.label,
+          errorText: widget.errorText),
     );
   }
 }
@@ -31,13 +33,11 @@ class PasswordTextField extends StatefulWidget {
     super.key,
     required this.label,
     this.controller,
-    required this.onSaved,
-    required this.validator,
+    this.errorText,
   });
   final String? label;
   final TextEditingController? controller;
-  final void Function(String?)? onSaved;
-  final String? Function(String?)? validator;
+  final String? errorText;
 
   @override
   State<PasswordTextField> createState() => _PasswordTextFieldState();
@@ -49,11 +49,10 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
     return TextFormField(
       obscureText: true,
       controller: widget.controller,
-      onSaved: widget.onSaved,
-      validator: widget.validator,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: widget.label,
+        errorText: widget.errorText,
       ),
     );
   }

@@ -1,10 +1,9 @@
 import 'dart:convert';
 
-// RegistrationModel registrationModelFromJson(String str) => RegistrationModel.fromJson(json.decode(str));
-Map<String, dynamic> registrationModelFromJson(String str) {
-  return Map.from({});
-}
-
+/// It takes a RegistrationModel object and returns a JSON string
+///
+/// Args:
+///   data (RegistrationModel): The data to be converted to JSON.
 String registrationModelToJson(RegistrationModel data) =>
     json.encode(data.toJson());
 
