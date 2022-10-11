@@ -4,6 +4,6 @@ class Routes {
       login = "login",
       success = "success",
       productList = "product_list",
-      product = "product",
+      editProduct = "edit_product",
       addProduct = "add_product";
 }

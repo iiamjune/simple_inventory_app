@@ -14,13 +14,13 @@ class ConfirmDialog extends StatelessWidget {
       content: Text(content),
       actions: <Widget>[
         ElevatedButton(
-          child: Text(Label.yes),
+          child: const Text(Label.yes),
           onPressed: () {
             Navigator.of(context).pop(true);
           },
         ),
         ElevatedButton(
-          child: Text(Label.no),
+          child: const Text(Label.no),
           onPressed: () {
             Navigator.of(context).pop(false);
           },

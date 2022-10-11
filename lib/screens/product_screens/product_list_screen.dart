@@ -205,7 +205,7 @@ class _ProductListState extends State<ProductList> {
                               await SharedPreferences.getInstance();
                           prefs.setString(
                               "productID", products[index].id.toString());
-                          Navigation(context).goToProduct();
+                          Navigation(context).goToEditProduct();
                         },
                       ),
                       Divider(color: Colors.indigo[600], thickness: 1.0),

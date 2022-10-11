@@ -1,6 +1,6 @@
 import 'package:flutter_application_1/screens/product_screens/add_product_screen.dart';
 import 'package:flutter_application_1/screens/product_screens/product_list_screen.dart';
-import 'package:flutter_application_1/screens/product_screens/product_screen.dart';
+import 'package:flutter_application_1/screens/product_screens/edit_product_screen.dart';
 import 'package:flutter_application_1/screens/auth_screens/registration_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -40,9 +40,9 @@ class RouteGenerate {
           builder: (context, state) => const ProductList(),
         ),
         GoRoute(
-          name: Routes.product,
-          path: '/product',
-          builder: (context, state) => const Product(),
+          name: Routes.editProduct,
+          path: '/edit_product',
+          builder: (context, state) => const EditProduct(),
         ),
         GoRoute(
           name: Routes.addProduct,
