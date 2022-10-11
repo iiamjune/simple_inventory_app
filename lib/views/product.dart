@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/product_service.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 import '../constants/labels.dart';
 import '../models/product_data_model.dart';
@@ -31,7 +34,8 @@ class _ProductState extends State<Product> {
   Map<String, dynamic>? data = {};
   bool success = false;
   String? errorMessage;
-  String appbarTitle = "Single Product";
+  String appbarTitle = Label.singleProduct;
+  bool urlIsValid = false;
 
   void initData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -49,7 +53,7 @@ class _ProductState extends State<Product> {
     setState(() {});
   }
 
-  void getData() async {
+  void getEditData() async {
     data = await ProductService(context).editProduct(
       token: token!,
       productID: productID!,
@@ -76,6 +80,52 @@ class _ProductState extends State<Product> {
     return false;
   }
 
+  void onPressed() {
+    if (!isEditing) {
+      isEditing = true;
+      appbarTitle = "Edit Product";
+    } else {
+      isEditing = false;
+      appbarTitle = "Single Product";
+      getEditData();
+
+      Future.delayed(const Duration(seconds: 2)).then((value) {
+        if (success) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Edit successful")));
+        } else {
+          errorMessage != null
+              ? ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(errorMessage!)))
+              : null;
+        }
+      });
+    }
+    setState(() {});
+  }
+
+  void checkUrlValidity(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        urlIsValid = true;
+      }
+    } on SocketException {
+      urlIsValid = false;
+    }
+
+    urlIsValid = false;
+  }
+
+  String getUrl(String url) {
+    checkUrlValidity(url);
+    if (urlIsValid) {
+      return url;
+    }
+    return "https://cdn-icons-png.flaticon.com/512/71/71768.png";
+  }
+
   @override
   void initState() {
     initData();
@@ -92,7 +142,7 @@ class _ProductState extends State<Product> {
           title: Text(appbarTitle),
           centerTitle: true,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigation(context).backToHome();
             },
@@ -121,9 +171,9 @@ class _ProductState extends State<Product> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(Label.createdAt),
+                          const Text(Label.createdAt),
                           Text(productData?.createdAt.toIso8601String() ?? ""),
-                          Text(Label.updatedAt),
+                          const Text(Label.updatedAt),
                           Text(productData?.updatedAt.toIso8601String() ?? ""),
                         ],
                       ),
@@ -144,7 +194,7 @@ class _ProductState extends State<Product> {
                                       border: OutlineInputBorder(),
                                       labelText: Label.id),
                                 )),
-                            SizedBox(width: 10.0),
+                            const SizedBox(width: 10.0),
                             Expanded(
                                 flex: 1,
                                 child: TextFormField(
@@ -157,7 +207,7 @@ class _ProductState extends State<Product> {
                                 )),
                           ],
                         ),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         TextFormField(
                           enabled: isEditing,
                           controller: productNameController,
@@ -166,7 +216,7 @@ class _ProductState extends State<Product> {
                               border: OutlineInputBorder(),
                               labelText: Label.productName),
                         ),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         TextFormField(
                           enabled: isEditing,
                           controller: imageLinkController,
@@ -175,7 +225,7 @@ class _ProductState extends State<Product> {
                               border: OutlineInputBorder(),
                               labelText: Label.imageLink),
                         ),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         TextFormField(
                           enabled: isEditing,
                           controller: descriptionController,
@@ -184,7 +234,7 @@ class _ProductState extends State<Product> {
                               border: OutlineInputBorder(),
                               labelText: Label.description),
                         ),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         TextFormField(
                           enabled: isEditing,
                           controller: priceController,
@@ -194,7 +244,7 @@ class _ProductState extends State<Product> {
                               border: OutlineInputBorder(),
                               labelText: Label.price),
                         ),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -222,29 +272,7 @@ class _ProductState extends State<Product> {
                     ),
                   ),
                   MainButton(
-                    onPressed: () async {
-                      if (!isEditing) {
-                        isEditing = true;
-                        appbarTitle = "Edit Product";
-                      } else {
-                        isEditing = false;
-                        appbarTitle = "Single Product";
-                        getData();
-
-                        Future.delayed(Duration(seconds: 2)).then((value) {
-                          if (success) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Edit successful")));
-                          } else {
-                            errorMessage != null
-                                ? ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(errorMessage!)))
-                                : null;
-                          }
-                        });
-                      }
-                      setState(() {});
-                    },
+                    onPressed: onPressed,
                     buttonLabel: isEditing ? Label.save : Label.edit,
                   ),
                 ],

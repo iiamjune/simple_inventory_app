@@ -11,10 +11,10 @@ class LoginService {
   BuildContext context;
 
   /// Creating a map of headers.
-  static MapEntry<String, String> _json =
-          const MapEntry("Accept", "application/json"),
-      contentType = const MapEntry("Content-Type", "application/json"),
-      accessControl = const MapEntry("Access-Control-Allow-Origin", "*");
+  static const MapEntry<String, String> _json =
+          MapEntry("Accept", "application/json"),
+      contentType = MapEntry("Content-Type", "application/json"),
+      accessControl = MapEntry("Access-Control-Allow-Origin", "*");
 
   /// _header() returns a map of strings that contains the keys "Content-Type",
   /// "Access-Control-Allow-Origin", and "Content-Type" with the values "application/json", "*", and
@@ -62,9 +62,10 @@ class LoginService {
         )));
 
     if (response.statusCode == 201) {
+      print(json.decode(response.body));
       return json.decode(response.body);
     } else {
-      //TODO: Error Handling
+      print(json.decode(response.body));
       return json.decode(response.body);
     }
   }

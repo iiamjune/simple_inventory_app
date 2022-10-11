@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/product_list_model.dart';
 import 'package:flutter_application_1/services/logout_service.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_application_1/services/product_list_service.dart';
 import 'package:flutter_application_1/services/product_service.dart';
 import 'package:flutter_application_1/widgets/dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 import '../constants/labels.dart';
 import '../services/navigation.dart';
@@ -24,6 +27,7 @@ class _HomeState extends State<Home> {
   List<ProductListModel> products = [];
   bool isDataLoaded = false;
   int? deleteData;
+  bool urlIsValid = false;
 
   /// It gets the logout data from the server and sets the state of the widget
   void getLogoutData() async {
@@ -100,6 +104,31 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void checkUrlValidity(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        urlIsValid = true;
+      } else {
+        urlIsValid = false;
+      }
+    } on SocketException {
+      urlIsValid = false;
+    }
+  }
+
+  String getUrl(String url) {
+    checkUrlValidity(url);
+    print(urlIsValid);
+    if (urlIsValid) {
+      return url;
+    }
+    return "https://cdn-icons-png.flaticon.com/512/71/71768.png";
+  }
+
   @override
   void initState() {
     getProductsData();
@@ -126,7 +155,7 @@ class _HomeState extends State<Home> {
         child: const Icon(Icons.add),
       ),
       body: Visibility(
-          visible: isDataLoaded,
+          visible: isDataLoaded && products.isNotEmpty,
           replacement: const Center(child: CircularProgressIndicator()),
           child: ListView.builder(
               itemBuilder: (context, index) {
@@ -162,9 +191,10 @@ class _HomeState extends State<Home> {
                     children: [
                       ListTile(
                         leading: CircleAvatar(
-                            backgroundColor: Colors.indigo[600],
-                            backgroundImage:
-                                NetworkImage(products[index].imageLink)),
+                          backgroundColor: Colors.indigo[600],
+                          backgroundImage:
+                              NetworkImage(products[index].imageLink),
+                        ),
                         title: Text(products[index].name),
                         subtitle:
                             Text(products[index].updatedAt.toIso8601String()),

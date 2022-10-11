@@ -11,10 +11,10 @@ class RegistrationService {
   BuildContext context;
 
   /// Creating a map entry.
-  static MapEntry<String, String> accept =
-          const MapEntry("Accept", "application/json"),
-      contentType = const MapEntry("Content-Type", "application/json"),
-      accessControl = const MapEntry("Access-Control-Allow-Origin", "*");
+  static const MapEntry<String, String> accept =
+          MapEntry("Accept", "application/json"),
+      contentType = MapEntry("Content-Type", "application/json"),
+      accessControl = MapEntry("Access-Control-Allow-Origin", "*");
 
   /// _header() returns a map of strings that contains the accept, contentType, and accessControl
   /// headers
@@ -65,9 +65,10 @@ class RegistrationService {
             passwordConfirmation: passwordConfirmation)));
 
     if (response.statusCode == 201) {
+      print(json.decode(response.body));
       return json.decode(response.body);
     } else {
-      //TODO: Error Validation for existing email, and the password confirmation does not match
+      print(json.decode(response.body));
       return json.decode(response.body);
     }
   }
