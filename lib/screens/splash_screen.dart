@@ -27,7 +27,7 @@ class _SplashState extends State<Splash> {
 
   initData() {
     getCheckResult();
-    Future.delayed(const Duration(seconds: 1)).then((value) {
+    Future.delayed(const Duration(seconds: 2)).then((value) {
       if (isLoggedIn) {
         getLoginData();
         loginProcess();
@@ -80,7 +80,7 @@ class _SplashState extends State<Splash> {
   void loginProcess() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    Future.delayed(const Duration(seconds: 1)).then((value) {
+    Future.delayed(const Duration(seconds: 2)).then((value) {
       if (success) {
         prefs.setString("token", token!);
         prefs.setString("email", email!);
