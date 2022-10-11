@@ -49,7 +49,6 @@ class _LoginState extends State<Login> {
         if (data!.containsKey("errors")) {
           errors = data?["errors"];
         }
-        // errors = data?["errors"];
       }
       if (data!.containsKey("token")) {
         success = true;
@@ -73,6 +72,8 @@ class _LoginState extends State<Login> {
     Future.delayed(const Duration(seconds: 2)).then((value) {
       if (success) {
         prefs.setString("token", token!);
+        prefs.setString("email", emailController.text);
+        prefs.setString("password", passwordController.text);
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Token: ${token!}")));
         Navigation(context).backToProductList();

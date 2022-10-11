@@ -85,6 +85,8 @@ class _RegistrationState extends State<Registration> {
     Future.delayed(const Duration(seconds: 2)).then((value) {
       if (success) {
         prefs.setString("token", token!);
+        prefs.setString("email", emailController.text);
+        prefs.setString("password", passwordConfirmationController.text);
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Token: ${token!}")));
         Popup(context).showSuccess(

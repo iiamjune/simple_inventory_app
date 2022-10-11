@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/labels.dart';
+import '../services/auth_services/auth_service.dart';
+import '../services/auth_services/login_service.dart';
 import '../services/navigation.dart';
 
 class Splash extends StatefulWidget {
@@ -11,9 +14,99 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  bool isLoggedIn = false;
+  Map<String, dynamic>? data = {};
+  Map<String, dynamic>? errors = {};
+  String? errorMessage;
+  bool success = false;
+  String? email;
+  String? password;
+  String? emailError;
+  String? passwordError;
+  String? token;
+
   initData() {
-    Future.delayed(const Duration(seconds: 3))
-        .then((value) => Navigation(context).goToRegistration());
+    getCheckResult();
+    Future.delayed(const Duration(seconds: 1)).then((value) {
+      if (isLoggedIn) {
+        getLoginData();
+        loginProcess();
+      } else {
+        Future.delayed(const Duration(seconds: 1))
+            .then((value) => Navigation(context).goToRegistration());
+      }
+    });
+  }
+
+  getCheckResult() async {
+    isLoggedIn = await AuthService(context).isLoggedIn();
+  }
+
+  void getLoginData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    email = prefs.getString("email") ?? "";
+    password = prefs.getString("password") ?? "";
+
+    if (email!.isEmpty || password!.isEmpty) {
+      Future.delayed(const Duration(seconds: 1))
+          .then((value) => Navigation(context).goToRegistration());
+    } else {
+      data = (await LoginService(context).login(email!, password!));
+      setState(() {
+        if (data!.containsKey("message")) {
+          success = false;
+          errorMessage = data?["message"];
+          emailError = null;
+          passwordError = null;
+          errors = null;
+          if (data!.containsKey("errors")) {
+            errors = data?["errors"];
+          }
+        }
+        if (data!.containsKey("token")) {
+          success = true;
+          token = data?["token"];
+        }
+      });
+      setState(() {
+        if (errors != null) {
+          storeEmailError(errors);
+          storePasswordError(errors);
+        }
+      });
+    }
+  }
+
+  void loginProcess() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Future.delayed(const Duration(seconds: 1)).then((value) {
+      if (success) {
+        prefs.setString("token", token!);
+        prefs.setString("email", email!);
+        prefs.setString("password", password!);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Token: ${token!}")));
+        Navigation(context).backToProductList();
+      } else {
+        errorMessage != null
+            ? ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(errorMessage!)))
+            : null;
+      }
+    });
+  }
+
+  void storeEmailError(Map<String, dynamic>? errors) {
+    if (errors!.containsKey("email")) {
+      emailError = errors["email"][0];
+    }
+  }
+
+  void storePasswordError(Map<String, dynamic>? errors) {
+    if (errors!.containsKey("password")) {
+      passwordError = errors["password"][0];
+    }
   }
 
   @override
