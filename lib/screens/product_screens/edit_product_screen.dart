@@ -135,6 +135,17 @@ class _EditProductState extends State<EditProduct> {
   }
 
   @override
+  void dispose() {
+    idController.dispose();
+    userIDController.dispose();
+    productNameController.dispose();
+    imageLinkController.dispose();
+    descriptionController.dispose();
+    priceController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {

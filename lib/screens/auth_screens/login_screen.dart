@@ -29,10 +29,14 @@ class _LoginState extends State<Login> {
   String? passwordError;
   String? token;
   bool success = false;
+  bool isProcessing = false;
 
   /// It's making an API call to a server, and if the response contains an error, it will store the error
   /// message in a variable
   void getLoginData() async {
+    setState(() {
+      isProcessing = true;
+    });
     data = (await LoginService(context)
         .login(emailController.text, passwordController.text));
     setState(() {
@@ -79,6 +83,10 @@ class _LoginState extends State<Login> {
             : null;
       }
     });
+
+    setState(() {
+      isProcessing = false;
+    });
   }
 
   /// It gets login data and then processes the login.
@@ -107,6 +115,13 @@ class _LoginState extends State<Login> {
     if (errors!.containsKey("password")) {
       passwordError = errors["password"][0];
     }
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 
   @override

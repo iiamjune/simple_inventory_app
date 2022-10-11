@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class MainButton extends StatefulWidget {
   const MainButton(
       {super.key, required this.onPressed, required this.buttonLabel});
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String buttonLabel;
 
   @override

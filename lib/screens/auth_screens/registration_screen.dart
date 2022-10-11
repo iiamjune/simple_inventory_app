@@ -37,10 +37,14 @@ class _RegistrationState extends State<Registration> {
   String? confirmPasswordError;
   String? token;
   bool success = false;
+  bool isProcessing = false;
 
   /// It's making an API call to a server, and if the response contains an error, it will store the error
   /// message in a variable
   void getRegistrationData() async {
+    setState(() {
+      isProcessing = true;
+    });
     data = (await RegistrationService(context).register(
       nameController.text,
       emailController.text,
@@ -93,6 +97,10 @@ class _RegistrationState extends State<Registration> {
                 .showSnackBar(SnackBar(content: Text(errorMessage!)))
             : null;
       }
+    });
+
+    setState(() {
+      isProcessing = false;
     });
   }
 
@@ -217,7 +225,7 @@ class _RegistrationState extends State<Registration> {
                   ),
                 ),
                 MainButton(
-                  onPressed: createAccount,
+                  onPressed: isProcessing ? null : createAccount,
                   buttonLabel: Label.createAccount,
                 ),
                 const Divider(

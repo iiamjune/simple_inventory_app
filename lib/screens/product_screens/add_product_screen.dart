@@ -77,6 +77,15 @@ class _AddProductState extends State<AddProduct> {
   }
 
   @override
+  void dispose() {
+    productNameController.dispose();
+    imageLinkController.dispose();
+    descriptionController.dispose();
+    priceController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
