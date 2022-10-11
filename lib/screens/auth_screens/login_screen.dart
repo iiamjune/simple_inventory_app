@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/auth_services/login_service.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
 import 'package:flutter_application_1/widgets/button.dart';
-import 'package:flutter_application_1/widgets/footer.dart';
+import 'package:flutter_application_1/widgets/auth_page_footer.dart';
 import 'package:flutter_application_1/widgets/textformfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -133,18 +133,18 @@ class _LoginState extends State<Login> {
                   reverse: true,
                   child: Column(
                     children: [
-                      StandardTextField(
+                      AuthTextField(
                         label: Label.email,
                         controller: emailController,
                         errorText: emailError,
                       ),
                       const SizedBox(height: 20.0),
-                      PasswordTextField(
+                      AuthTextField(
                         label: Label.password,
+                        obscureText: true,
                         controller: passwordController,
                         errorText: passwordError,
                       ),
-                      const SizedBox(height: 20.0),
                     ],
                   ),
                 ),
@@ -156,7 +156,7 @@ class _LoginState extends State<Login> {
                   color: Colors.grey,
                   thickness: 1.0,
                 ),
-                PageFooter(
+                AuthPageFooter(
                   label: Label.dontHaveAnAccount,
                   navigation: () {
                     Navigation(context).goToRegistration();

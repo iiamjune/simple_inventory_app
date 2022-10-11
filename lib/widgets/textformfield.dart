@@ -1,60 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class StandardTextField extends StatefulWidget {
-  const StandardTextField({
+class AuthTextField extends StatefulWidget {
+  const AuthTextField({
     super.key,
     required this.label,
-    this.controller,
-    this.errorText,
+    required this.controller,
+    required this.errorText,
+    this.obscureText = false,
   });
   final String? label;
   final TextEditingController? controller;
   final String? errorText;
+  final bool obscureText;
 
   @override
-  State<StandardTextField> createState() => _StandardTextFieldState();
+  State<AuthTextField> createState() => _AuthTextFieldState();
 }
 
-class _StandardTextFieldState extends State<StandardTextField> {
+class _AuthTextFieldState extends State<AuthTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      obscureText: widget.obscureText,
       controller: widget.controller,
       decoration: InputDecoration(
           border: const OutlineInputBorder(),
           labelText: widget.label,
           errorText: widget.errorText),
-    );
-  }
-}
-
-class PasswordTextField extends StatefulWidget {
-  const PasswordTextField({
-    super.key,
-    required this.label,
-    this.controller,
-    this.errorText,
-  });
-  final String? label;
-  final TextEditingController? controller;
-  final String? errorText;
-
-  @override
-  State<PasswordTextField> createState() => _PasswordTextFieldState();
-}
-
-class _PasswordTextFieldState extends State<PasswordTextField> {
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      obscureText: true,
-      controller: widget.controller,
-      decoration: InputDecoration(
-        border: const OutlineInputBorder(),
-        labelText: widget.label,
-        errorText: widget.errorText,
-      ),
     );
   }
 }

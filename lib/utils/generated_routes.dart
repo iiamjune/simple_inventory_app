@@ -1,6 +1,6 @@
 import 'package:flutter_application_1/screens/product_screens/add_product_screen.dart';
 import 'package:flutter_application_1/screens/product_screens/product_list_screen.dart';
-import 'package:flutter_application_1/screens/product_screens/product.dart';
+import 'package:flutter_application_1/screens/product_screens/product_screen.dart';
 import 'package:flutter_application_1/screens/auth_screens/registration_screen.dart';
 import 'package:go_router/go_router.dart';
 

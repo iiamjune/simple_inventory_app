@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class PageFooter extends StatelessWidget {
-  const PageFooter(
+class AuthPageFooter extends StatelessWidget {
+  const AuthPageFooter(
       {super.key,
       required this.label,
       required this.navigation,
@@ -21,7 +21,7 @@ class PageFooter extends StatelessWidget {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey),
+          style: const TextStyle(color: Colors.grey),
         ),
         TextButton(
           onPressed: navigation,
