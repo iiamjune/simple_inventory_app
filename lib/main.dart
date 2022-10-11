@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/utils/generated_routes.dart';
-import 'package:flutter_application_1/views/splash.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:provider/provider.dart';
 
 import 'constants/labels.dart';
 

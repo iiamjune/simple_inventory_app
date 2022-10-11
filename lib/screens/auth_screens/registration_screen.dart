@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/services/registration_service.dart';
+import 'package:flutter_application_1/services/auth_services/registration_service.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/footer.dart';
@@ -7,8 +7,8 @@ import 'package:flutter_application_1/widgets/popup.dart';
 import 'package:flutter_application_1/widgets/textformfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../constants/labels.dart';
-import '../services/navigation.dart';
+import '../../constants/labels.dart';
+import '../../services/navigation.dart';
 
 class Registration extends StatefulWidget {
   const Registration({super.key});
@@ -85,7 +85,7 @@ class _RegistrationState extends State<Registration> {
             .showSnackBar(SnackBar(content: Text("Token: ${token!}")));
         Popup(context).showSuccess(
           message: Label.registrationSuccessful,
-          onTap: () => Navigation(context).backToHome(),
+          onTap: () => Navigation(context).backToProductList(),
         );
       } else {
         errorMessage != null

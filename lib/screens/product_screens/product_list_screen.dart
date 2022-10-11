@@ -1,25 +1,25 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/models/product_list_model.dart';
-import 'package:flutter_application_1/services/logout_service.dart';
-import 'package:flutter_application_1/services/product_list_service.dart';
-import 'package:flutter_application_1/services/product_service.dart';
+import 'package:flutter_application_1/models/product_models/product_list_model.dart';
+import 'package:flutter_application_1/services/auth_services/logout_service.dart';
+import 'package:flutter_application_1/services/product_services/product_list_service.dart';
+import 'package:flutter_application_1/services/product_services/product_service.dart';
 import 'package:flutter_application_1/widgets/dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-import '../constants/labels.dart';
-import '../services/navigation.dart';
+import '../../constants/labels.dart';
+import '../../services/navigation.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class ProductList extends StatefulWidget {
+  const ProductList({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<ProductList> createState() => _ProductListState();
 }
 
-class _HomeState extends State<Home> {
+class _ProductListState extends State<ProductList> {
   Map<String, dynamic>? logoutData = {};
   String? message;
   String? token;
@@ -138,7 +138,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.indigo[600],
-        title: const Text(Label.productsList),
+        title: const Text(Label.productList),
         centerTitle: true,
         actions: <Widget>[
           IconButton(

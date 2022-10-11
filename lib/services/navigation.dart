@@ -17,8 +17,8 @@ class Navigation {
     context.goNamed(Routes.login);
   }
 
-  backToHome() {
-    context.goNamed(Routes.home);
+  backToProductList() {
+    context.goNamed(Routes.productList);
   }
 
   goToProduct() {

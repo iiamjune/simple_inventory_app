@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/services/login_service.dart';
+import 'package:flutter_application_1/services/auth_services/login_service.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/footer.dart';
 import 'package:flutter_application_1/widgets/textformfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../constants/labels.dart';
-import '../services/navigation.dart';
+import '../../constants/labels.dart';
+import '../../services/navigation.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -71,7 +71,7 @@ class _LoginState extends State<Login> {
         prefs.setString("token", token!);
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Token: ${token!}")));
-        Navigation(context).backToHome();
+        Navigation(context).backToProductList();
       } else {
         errorMessage != null
             ? ScaffoldMessenger.of(context)

@@ -1,16 +1,16 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/services/product_service.dart';
+import 'package:flutter_application_1/services/product_services/product_service.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/dropdown.dart';
 import 'package:flutter_application_1/widgets/textformfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-import '../constants/labels.dart';
-import '../models/product_data_model.dart';
-import '../services/navigation.dart';
+import '../../constants/labels.dart';
+import '../../models/product_models/product_data_model.dart';
+import '../../services/navigation.dart';
 
 class Product extends StatefulWidget {
   const Product({super.key});
@@ -138,7 +138,7 @@ class _ProductState extends State<Product> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigation(context).backToHome();
+        Navigation(context).backToProductList();
         return false;
       },
       child: SafeArea(
@@ -151,7 +151,7 @@ class _ProductState extends State<Product> {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                Navigation(context).backToHome();
+                Navigation(context).backToProductList();
               },
             ),
           ),

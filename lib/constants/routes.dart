@@ -3,7 +3,7 @@ class Routes {
       register = "register",
       login = "login",
       success = "success",
-      home = "home",
+      productList = "product_list",
       product = "product",
       addProduct = "add_product";
 }

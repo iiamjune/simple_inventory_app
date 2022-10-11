@@ -1,13 +1,13 @@
-import 'package:flutter_application_1/views/add_product.dart';
-import 'package:flutter_application_1/views/home.dart';
-import 'package:flutter_application_1/views/product.dart';
-import 'package:flutter_application_1/views/registration.dart';
+import 'package:flutter_application_1/screens/product_screens/add_product_screen.dart';
+import 'package:flutter_application_1/screens/product_screens/product_list_screen.dart';
+import 'package:flutter_application_1/screens/product_screens/product.dart';
+import 'package:flutter_application_1/screens/auth_screens/registration_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import '../constants/routes.dart';
-import '../views/login.dart';
-import '../views/splash.dart';
-import '../views/success.dart';
+import '../screens/auth_screens/login_screen.dart';
+import '../screens/splash_screen.dart';
+import '../screens/success_screen.dart';
 
 class RouteGenerate {
   final GoRouter router = GoRouter(
@@ -35,9 +35,9 @@ class RouteGenerate {
           builder: (context, state) => const Success(),
         ),
         GoRoute(
-          name: Routes.home,
-          path: '/home',
-          builder: (context, state) => const Home(),
+          name: Routes.productList,
+          path: '/product_list',
+          builder: (context, state) => const ProductList(),
         ),
         GoRoute(
           name: Routes.product,

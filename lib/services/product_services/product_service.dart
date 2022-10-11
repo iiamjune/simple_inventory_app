@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_application_1/models/product_data_model.dart';
+import 'package:flutter_application_1/models/product_models/product_data_model.dart';
 import 'package:http/http.dart' as http;
 
-import '../constants/endpoints.dart';
-import '../constants/globals.dart';
-import '../models/product_model.dart';
+import '../../constants/endpoints.dart';
+import '../../constants/globals.dart';
+import '../../models/product_models/product_model.dart';
 
 class ProductService {
   ProductService(this.context);

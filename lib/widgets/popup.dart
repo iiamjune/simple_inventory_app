@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/views/success.dart';
+import 'package:flutter_application_1/screens/success_screen.dart';
 
 class Popup {
   Popup(this.context);

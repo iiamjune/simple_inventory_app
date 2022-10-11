@@ -4,9 +4,9 @@ import 'package:flutter_application_1/widgets/dropdown.dart';
 import 'package:flutter_application_1/widgets/textformfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../constants/labels.dart';
-import '../services/navigation.dart';
-import '../services/product_service.dart';
+import '../../constants/labels.dart';
+import '../../services/navigation.dart';
+import '../../services/product_services/product_service.dart';
 
 class AddProduct extends StatefulWidget {
   const AddProduct({super.key});
@@ -59,7 +59,7 @@ class _AddProductState extends State<AddProduct> {
       if (success) {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text(Label.addSuccessful)));
-        Navigation(context).backToHome();
+        Navigation(context).backToProductList();
       } else {
         errorMessage != null
             ? ScaffoldMessenger.of(context)
@@ -80,7 +80,7 @@ class _AddProductState extends State<AddProduct> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigation(context).backToHome();
+        Navigation(context).backToProductList();
         return false;
       },
       child: SafeArea(
@@ -93,7 +93,7 @@ class _AddProductState extends State<AddProduct> {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                Navigation(context).backToHome();
+                Navigation(context).backToProductList();
               },
             ),
           ),

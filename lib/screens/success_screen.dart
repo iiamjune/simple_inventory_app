@@ -16,7 +16,7 @@ class Success extends StatelessWidget {
         children: <Widget>[
           Column(
             children: <Widget>[
-              Align(
+              const Align(
                 alignment: Alignment.center,
                 child: Icon(
                   Icons.check_circle_outline,
@@ -24,10 +24,10 @@ class Success extends StatelessWidget {
                   size: 150.0,
                 ),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               Text(
                 message!,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
