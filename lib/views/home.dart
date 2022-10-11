@@ -74,10 +74,10 @@ class _HomeState extends State<Home> {
       String message;
       if (deleteData != null && deleteData == 1) {
         deleteResult = true;
-        message = 'Delete successful';
+        message = Label.deleteSuccessful;
       } else {
         deleteResult = false;
-        message = 'Delete unsuccessful';
+        message = Label.deleteUnsuccessful;
       }
 
       ScaffoldMessenger.of(context)
@@ -107,8 +107,6 @@ class _HomeState extends State<Home> {
   void checkUrlValidity(String url) async {
     try {
       final response = await http.get(Uri.parse(url));
-
-      print(response.statusCode);
 
       if (response.statusCode == 200) {
         urlIsValid = true;

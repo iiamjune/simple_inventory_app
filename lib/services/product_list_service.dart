@@ -67,6 +67,5 @@ class ProductListService {
     } else {
       print(response.body);
     }
-    return null;
   }
 }

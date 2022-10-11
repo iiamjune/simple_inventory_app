@@ -29,5 +29,11 @@ class Label {
       areYouSureDelete = "Are you sure you want to delete this note?",
       registrationSuccessful = "Registration successful",
       productsList = "Products List",
-      singleProduct = "Single Product";
+      singleProduct = "Single Product",
+      addProduct = "Add Product",
+      deleteSuccessful = "Delete successful",
+      deleteUnsuccessful = "Delete unsuccessful",
+      editProduct = "Edit Product",
+      editSuccessful = "Edit successful",
+      addSuccessful = "Add successful";
 }

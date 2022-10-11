@@ -83,16 +83,16 @@ class _ProductState extends State<Product> {
   void onPressed() {
     if (!isEditing) {
       isEditing = true;
-      appbarTitle = "Edit Product";
+      appbarTitle = Label.editProduct;
     } else {
       isEditing = false;
-      appbarTitle = "Single Product";
+      appbarTitle = Label.singleProduct;
       getEditData();
 
       Future.delayed(const Duration(seconds: 2)).then((value) {
         if (success) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Edit successful")));
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text(Label.editSuccessful)));
         } else {
           errorMessage != null
               ? ScaffoldMessenger.of(context)

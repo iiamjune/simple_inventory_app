@@ -50,6 +50,24 @@ class _AddProductState extends State<AddProduct> {
     });
   }
 
+  void addProduct() {
+    getData();
+
+    Future.delayed(const Duration(seconds: 2)).then((value) {
+      if (success) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text(Label.addSuccessful)));
+        Navigation(context).backToHome();
+      } else {
+        errorMessage != null
+            ? ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(errorMessage!)))
+            : null;
+      }
+    });
+    setState(() {});
+  }
+
   @override
   void initState() {
     initData();
@@ -63,10 +81,10 @@ class _AddProductState extends State<AddProduct> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Colors.indigo[600],
-          title: Text("Add Product"),
+          title: const Text(Label.addProduct),
           centerTitle: true,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigation(context).backToHome();
             },
@@ -91,7 +109,7 @@ class _AddProductState extends State<AddProduct> {
                               border: OutlineInputBorder(),
                               labelText: Label.productName),
                         ),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         TextFormField(
                           controller: imageLinkController,
                           onSaved: (value) {},
@@ -99,7 +117,7 @@ class _AddProductState extends State<AddProduct> {
                               border: OutlineInputBorder(),
                               labelText: Label.imageLink),
                         ),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         TextFormField(
                           controller: descriptionController,
                           onSaved: (value) {},
@@ -107,7 +125,7 @@ class _AddProductState extends State<AddProduct> {
                               border: OutlineInputBorder(),
                               labelText: Label.description),
                         ),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         TextFormField(
                           controller: priceController,
                           keyboardType: TextInputType.number,
@@ -116,7 +134,7 @@ class _AddProductState extends State<AddProduct> {
                               border: OutlineInputBorder(),
                               labelText: Label.price),
                         ),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -142,23 +160,7 @@ class _AddProductState extends State<AddProduct> {
                     ),
                   ),
                   MainButton(
-                    onPressed: () async {
-                      getData();
-
-                      Future.delayed(Duration(seconds: 2)).then((value) {
-                        if (success) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Add successful")));
-                          Navigation(context).backToHome();
-                        } else {
-                          errorMessage != null
-                              ? ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(errorMessage!)))
-                              : null;
-                        }
-                      });
-                      setState(() {});
-                    },
+                    onPressed: addProduct,
                     buttonLabel: Label.add,
                   ),
                 ],
