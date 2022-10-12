@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/product_models/product_list_model.dart';
@@ -9,7 +8,6 @@ import 'package:flutter_application_1/services/product_services/product_service.
 import 'package:flutter_application_1/widgets/dialog.dart';
 import 'package:number_pagination/number_pagination.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 import '../../constants/labels.dart';
 import '../../services/navigation.dart';
@@ -38,10 +36,14 @@ class _ProductListState extends State<ProductList> {
 
   /// It gets the logout data from the server and sets the state of the widget
   void getLogoutData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     logoutData = (await LogoutService(context).logout(token: token!));
     setState(() {
       if (logoutData!.containsKey("message")) {
         if (logoutData?["message"] == "Logged out") {
+          for (var element in ["token", "email", "password", "currentPage"]) {
+            prefs.remove(element);
+          }
           success = true;
           message = logoutData?["message"];
         } else {
@@ -125,10 +127,13 @@ class _ProductListState extends State<ProductList> {
     });
   }
 
+  void initData() {
+    getResponseData(pageNumber: currentPage.toString());
+  }
+
   @override
   void initState() {
-    getResponseData();
-    // getProductsData();
+    initData();
     super.initState();
   }
 
@@ -148,7 +153,9 @@ class _ProductListState extends State<ProductList> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.indigo[600],
-        onPressed: () => Navigation(context).goToAddProduct(),
+        onPressed: () {
+          Navigation(context).goToAddProduct();
+        },
         child: const Icon(Icons.add),
       ),
       body: Visibility(
@@ -241,13 +248,17 @@ class _ProductListState extends State<ProductList> {
                   NumberPagination(
                     fontSize: 10.0,
                     colorPrimary: Colors.indigo,
-                    onPageChanged: (pageNumber) {
+                    onPageChanged: (pageNumber) async {
+                      final SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      prefs.setInt("currentPage", pageNumber);
                       setState(() {
                         currentPage = pageNumber;
                         getResponseData(pageNumber: pageNumber.toString());
                       });
                     },
                     pageTotal: pageTotal ?? 0,
+                    pageInit: 1,
                   ),
                 ],
               ),

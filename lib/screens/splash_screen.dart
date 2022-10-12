@@ -33,7 +33,7 @@ class _SplashState extends State<Splash> {
         loginProcess();
       } else {
         Future.delayed(const Duration(seconds: 1))
-            .then((value) => Navigation(context).goToRegistration());
+            .then((value) => Navigation(context).goToLogin());
       }
     });
   }
