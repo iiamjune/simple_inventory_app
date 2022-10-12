@@ -1,11 +1,11 @@
-import 'package:flutter_application_1/screens/product_screens/add_product_screen.dart';
-import 'package:flutter_application_1/screens/product_screens/product_list_screen.dart';
-import 'package:flutter_application_1/screens/product_screens/edit_product_screen.dart';
-import 'package:flutter_application_1/screens/auth_screens/registration_screen.dart';
+import 'package:flutter_application_1/screens/product/add_product_screen.dart';
+import 'package:flutter_application_1/screens/product/product_list_screen.dart';
+import 'package:flutter_application_1/screens/product/edit_product_screen.dart';
+import 'package:flutter_application_1/screens/auth/registration_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import '../constants/routes.dart';
-import '../screens/auth_screens/login_screen.dart';
+import '../screens/auth/login_screen.dart';
 import '../screens/splash_screen.dart';
 import '../screens/success_screen.dart';
 
