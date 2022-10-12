@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/product_models/product_list_model.dart';
-import 'package:flutter_application_1/services/auth_services/logout_service.dart';
-import 'package:flutter_application_1/services/product_services/product_list_service.dart';
-import 'package:flutter_application_1/services/product_services/product_service.dart';
+import 'package:flutter_application_1/services/auth/logout_service.dart';
+import 'package:flutter_application_1/services/product/product_list_service.dart';
+import 'package:flutter_application_1/services/product/product_service.dart';
 import 'package:flutter_application_1/widgets/dialog.dart';
 import 'package:number_pagination/number_pagination.dart';
 import 'package:shared_preferences/shared_preferences.dart';

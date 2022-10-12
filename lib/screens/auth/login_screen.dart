@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/services/auth_services/login_service.dart';
+import 'package:flutter_application_1/services/auth/login_service.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/auth_page_footer.dart';
