@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/labels.dart';
 import '../services/auth/auth_service.dart';
 import '../services/auth/login_service.dart';
-import '../services/navigation.dart';
+import '../services/navigation_service.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});

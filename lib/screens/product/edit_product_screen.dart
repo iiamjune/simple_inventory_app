@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 
 import '../../constants/labels.dart';
 import '../../models/product/product_data_model.dart';
-import '../../services/navigation.dart';
+import '../../services/navigation_service.dart';
 
 class EditProduct extends StatefulWidget {
   const EditProduct({super.key});
