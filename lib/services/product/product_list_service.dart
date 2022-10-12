@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_application_1/models/product_models/product_list_model.dart';
+import 'package:flutter_application_1/models/product/product_list_model.dart';
 import 'package:http/http.dart' as http;
 
 import '../../constants/endpoints.dart';

@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../../constants/labels.dart';
-import '../../models/product_models/product_data_model.dart';
+import '../../models/product/product_data_model.dart';
 import '../../services/navigation.dart';
 
 class EditProduct extends StatefulWidget {

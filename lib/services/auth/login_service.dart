@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import '../../constants/endpoints.dart';
 import '../../constants/globals.dart';
-import '../../models/auth_models/login_model.dart';
+import '../../models/auth/login_model.dart';
 
 class LoginService {
   LoginService(this.context);
