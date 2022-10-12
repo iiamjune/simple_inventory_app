@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_application_1/services/auth_services/logout_service.dart
 import 'package:flutter_application_1/services/product_services/product_list_service.dart';
 import 'package:flutter_application_1/services/product_services/product_service.dart';
 import 'package:flutter_application_1/widgets/dialog.dart';
+import 'package:number_pagination/number_pagination.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -28,6 +30,11 @@ class _ProductListState extends State<ProductList> {
   bool isDataLoaded = false;
   int? deleteData;
   bool urlIsValid = false;
+  Color arrowColor = Colors.indigo[600]!;
+  Map<String, dynamic> responseData = {};
+  int? pageTotal;
+  int? currentPage;
+  int? lastPage;
 
   /// It gets the logout data from the server and sets the state of the widget
   void getLogoutData() async {
@@ -51,6 +58,20 @@ class _ProductListState extends State<ProductList> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString("token");
     products = (await ProductListService(context).getProducts(token: token!))!;
+    setState(() {
+      isDataLoaded = true;
+    });
+  }
+
+  void getResponseData({String pageNumber = ""}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString("token");
+    responseData = (await ProductListService(context)
+        .getResponse(token: token!, pageNumber: pageNumber))!;
+    products = productListModelFromJson(json.encode(responseData["data"]));
+    pageTotal = responseData["last_page"];
+    currentPage = responseData["current_page"];
+    lastPage = responseData["last_page"];
     setState(() {
       isDataLoaded = true;
     });
@@ -104,32 +125,10 @@ class _ProductListState extends State<ProductList> {
     });
   }
 
-  void checkUrlValidity(String url) async {
-    try {
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        urlIsValid = true;
-      } else {
-        urlIsValid = false;
-      }
-    } on SocketException {
-      urlIsValid = false;
-    }
-  }
-
-  String getUrl(String url) {
-    checkUrlValidity(url);
-    print(urlIsValid);
-    if (urlIsValid) {
-      return url;
-    }
-    return "https://cdn-icons-png.flaticon.com/512/71/71768.png";
-  }
-
   @override
   void initState() {
-    getProductsData();
+    getResponseData();
+    // getProductsData();
     super.initState();
   }
 
@@ -153,67 +152,109 @@ class _ProductListState extends State<ProductList> {
         child: const Icon(Icons.add),
       ),
       body: Visibility(
-          visible: isDataLoaded && products.isNotEmpty,
-          replacement: const Center(child: CircularProgressIndicator()),
-          child: ListView.builder(
-              itemBuilder: (context, index) {
-                return Dismissible(
-                  key: UniqueKey(),
-                  direction: DismissDirection.startToEnd,
-                  onDismissed: (direction) {
-                    getProductsData();
-                  },
-                  confirmDismiss: (direction) async {
-                    final result = await showDialog(
-                        context: context,
-                        builder: (_) => const ConfirmDialog(
-                              title: Label.warning,
-                              content: Label.areYouSureDelete,
-                            ));
+        visible: isDataLoaded && products.isNotEmpty,
+        replacement: const Center(child: CircularProgressIndicator()),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                  itemBuilder: (context, index) {
+                    return Dismissible(
+                      key: UniqueKey(),
+                      direction: DismissDirection.startToEnd,
+                      onDismissed: (direction) {
+                        getResponseData();
+                      },
+                      confirmDismiss: (direction) async {
+                        final result = await showDialog(
+                            context: context,
+                            builder: (_) => const ConfirmDialog(
+                                  title: Label.warning,
+                                  content: Label.areYouSureDelete,
+                                ));
 
-                    getDeleteData(result, index);
-                    return result;
+                        getDeleteData(result, index);
+                        return result;
+                      },
+                      background: Container(
+                        color: Colors.red,
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Column(
+                            children: [
+                              ListTile(
+                                contentPadding: const EdgeInsets.only(
+                                    top: 15.0, bottom: 15.0, right: 20.0),
+                                leading: CircleAvatar(
+                                  radius: 50.0,
+                                  backgroundColor: Colors.indigo[600],
+                                  backgroundImage:
+                                      NetworkImage(products[index].imageLink),
+                                ),
+                                title: Text(products[index].name),
+                                subtitle: Text(products[index]
+                                    .updatedAt
+                                    .toIso8601String()),
+                                trailing: Text(
+                                  products[index].price,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onTap: () async {
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  prefs.setString("productID",
+                                      products[index].id.toString());
+                                  Navigation(context).goToEditProduct();
+                                },
+                              ),
+                              Divider(
+                                color: Colors.indigo[600],
+                                thickness: 1.0,
+                                indent: 40.0,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
                   },
-                  background: Container(
-                    color: Colors.red,
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Icon(
-                        Icons.delete,
-                        color: Colors.white,
-                      ),
-                    ),
+                  itemCount: products.length),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0, bottom: 80.0),
+              child: Column(
+                children: [
+                  Text(
+                    "Page ${currentPage.toString()} of ${lastPage.toString()}",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.indigo[600],
-                          backgroundImage:
-                              NetworkImage(products[index].imageLink),
-                        ),
-                        title: Text(products[index].name),
-                        subtitle:
-                            Text(products[index].updatedAt.toIso8601String()),
-                        trailing: Text(
-                          products[index].price,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        onTap: () async {
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          prefs.setString(
-                              "productID", products[index].id.toString());
-                          Navigation(context).goToEditProduct();
-                        },
-                      ),
-                      Divider(color: Colors.indigo[600], thickness: 1.0),
-                    ],
+                  NumberPagination(
+                    fontSize: 10.0,
+                    colorPrimary: Colors.indigo,
+                    onPageChanged: (pageNumber) {
+                      setState(() {
+                        currentPage = pageNumber;
+                        getResponseData(pageNumber: pageNumber.toString());
+                      });
+                    },
+                    pageTotal: pageTotal ?? 0,
                   ),
-                );
-              },
-              itemCount: products.length)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

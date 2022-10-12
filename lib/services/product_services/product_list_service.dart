@@ -39,9 +39,9 @@ class ProductListService {
   ///
   /// Returns:
   ///   A Uri object.
-  Uri url({String endpoint = "", String query = ""}) {
+  Uri url({String endpoint = "", String page = ""}) {
     String endpointString = '$baseServerUrl$subString$endpoint';
-    String queryString = query.isNotEmpty ? query : '';
+    String queryString = page.isNotEmpty ? '?page=$page' : '';
     String fullString = '$endpointString$queryString';
     return Uri.parse(fullString);
   }
@@ -62,8 +62,25 @@ class ProductListService {
     );
 
     if (response.statusCode == 200) {
+      print(json.decode(response.body));
       var data = json.decode(response.body)["data"];
       return productListModelFromJson(json.encode(data));
+    } else {
+      print(response.body);
+    }
+  }
+
+  Future<Map<String, dynamic>?> getResponse(
+      {required String token, String pageNumber = "1"}) async {
+    var client = http.Client();
+    var response = await client.get(
+      url(endpoint: EndPoint.products, page: pageNumber),
+      headers: await _header(token: token),
+    );
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      return data;
     } else {
       print(response.body);
     }
