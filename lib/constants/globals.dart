@@ -31,7 +31,6 @@ class Globals {
           MapEntry("Authorization", "Bearer $token");
       content = Map.fromEntries(entries);
       content.addAll(Map.fromEntries([auth]));
-      print(content);
     } else {
       content = Map.fromEntries(entries);
     }

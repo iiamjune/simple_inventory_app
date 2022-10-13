@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/auth/registration_service.dart';
 import 'package:flutter_application_1/services/shared_preferences_service.dart';
@@ -33,6 +34,7 @@ class _RegistrationState extends State<Registration> {
   String? errorMessage;
   String? nameError;
   String? emailError;
+  String? emailFormatError;
   String? passwordError;
   String? confirmPasswordError;
   String? token;
@@ -45,12 +47,29 @@ class _RegistrationState extends State<Registration> {
     setState(() {
       isProcessing = true;
     });
+    setState(() {
+      if (emailController.text.isNotEmpty) {
+        if (validateEmail(emailController.text)) {
+          emailFormatError = null;
+          email = emailController.text;
+        } else {
+          email = "";
+          emailFormatError = null;
+          emailFormatError = ErrorMessage.invalidEmail;
+        }
+      } else {
+        emailFormatError = null;
+        email = emailController.text;
+      }
+    });
+
     data = (await RegistrationService(context).register(
       nameController.text,
-      emailController.text,
+      email!,
       passwordController.text,
       passwordConfirmationController.text,
     ));
+
     setState(() {
       if (data!.containsKey("errors")) {
         success = false;
@@ -61,6 +80,9 @@ class _RegistrationState extends State<Registration> {
         confirmPasswordError = null;
         errors = null;
         errors = data?["errors"];
+        if (errors!.containsKey("email") && emailFormatError != null) {
+          errors?["email"].insert(0, emailFormatError);
+        }
       }
       if (data!.containsKey("token")) {
         success = true;
@@ -172,6 +194,11 @@ class _RegistrationState extends State<Registration> {
       return;
     }
     createAccount();
+  }
+
+  bool validateEmail(String email) {
+    final bool result = EmailValidator.validate(email);
+    return result;
   }
 
   @override

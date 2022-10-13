@@ -37,3 +37,7 @@ class Label {
       editSuccessful = "Edit successful",
       addSuccessful = "Add successful";
 }
+
+class ErrorMessage {
+  static const invalidEmail = "Invalid email address.";
+}
