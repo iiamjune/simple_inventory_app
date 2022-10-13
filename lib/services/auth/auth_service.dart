@@ -1,14 +1,16 @@
 import 'package:flutter/cupertino.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_application_1/services/shared_preferences_service.dart';
 
 class AuthService {
   AuthService(this.context);
   BuildContext context;
 
   Future<bool> isLoggedIn() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey("token")) {
-      return true;
+    String? token = await SharedPref(context).getString("token");
+    if (token != null) {
+      if (token.isNotEmpty) {
+        return true;
+      }
     }
     return false;
   }
