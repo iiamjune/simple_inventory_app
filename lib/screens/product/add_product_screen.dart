@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/dropdown.dart';
 import 'package:flutter_application_1/widgets/textformfield.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/labels.dart';
 import '../../services/navigation_service.dart';
 import '../../services/product/product_service.dart';
+import '../../services/shared_preferences_service.dart';
 
 class AddProduct extends StatefulWidget {
   const AddProduct({super.key});
@@ -29,11 +29,10 @@ class _AddProductState extends State<AddProduct> {
   String? token;
 
   void initData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString("token");
+    token = await SharedPref(context).getString("token");
   }
 
-  void getData() async {
+  void getAddData() async {
     data = await ProductService(context).addProduct(
       token: token!,
       name: productNameController.text,
@@ -53,7 +52,7 @@ class _AddProductState extends State<AddProduct> {
   }
 
   void addProduct() {
-    getData();
+    getAddData();
 
     Future.delayed(const Duration(seconds: 2)).then((value) {
       if (success) {

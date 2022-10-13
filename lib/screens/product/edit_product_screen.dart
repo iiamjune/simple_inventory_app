@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/product/product_service.dart';
+import 'package:flutter_application_1/services/shared_preferences_service.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/dropdown.dart';
 import 'package:flutter_application_1/widgets/textformfield.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../../constants/labels.dart';
@@ -40,9 +40,8 @@ class _EditProductState extends State<EditProduct> {
   bool urlIsValid = false;
 
   void initData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString("token");
-    productID = prefs.getString("productID");
+    token = await SharedPref(context).getString("token");
+    productID = await SharedPref(context).getString("productID");
     productData = (await ProductService(context)
         .getProduct(token: token!, productID: productID!));
     idController.text = productData?.id.toString() ?? "";
