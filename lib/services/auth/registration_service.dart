@@ -10,66 +10,42 @@ class RegistrationService {
   RegistrationService(this.context);
   BuildContext context;
 
-  /// Creating a map entry.
-  static const MapEntry<String, String> accept =
-          MapEntry("Accept", "application/json"),
-      contentType = MapEntry("Content-Type", "application/json"),
-      accessControl = MapEntry("Access-Control-Allow-Origin", "*");
+  List<MapEntry<String, String>> entries = [accept, contentType, accessControl];
 
-  /// _header() returns a map of strings that contains the accept, contentType, and accessControl
-  /// headers
-  ///
-  /// Returns:
-  ///   A map of strings.
-  Map<String, String> _header() {
-    Map<String, String> content =
-        Map.fromEntries([accept, contentType, accessControl]);
-    return content;
-  }
-
-  /// It takes an endpoint and a query, and returns a Uri
-  ///
-  /// Args:
-  ///   endpoint (String): The endpoint of the API you're trying to hit.
-  ///   query (String): This is the query string that you want to pass to the server.
-  ///
-  /// Returns:
-  ///   A Uri object.
-  Uri url({String endpoint = "", String query = ""}) {
-    String endpointString = '$baseServerUrl$subString$endpoint';
-    String queryString = query.isNotEmpty ? query : '';
-    String fullString = '$endpointString$queryString';
-    return Uri.parse(fullString);
-  }
-
-  /// It takes in a name, email, password, and password confirmation, and returns a Map<String,
-  /// dynamic>?
+  /// It takes in 4 strings, sends a post request to the server, and returns a map of dynamic values
   ///
   /// Args:
   ///   name (String): The name of the user
-  ///   email (String): email,
-  ///   password (String): password,
+  ///   email (String): String,
+  ///   password (String): The password of the user
   ///   passwordConfirmation (String): passwordConfirmation,
   ///
   /// Returns:
   ///   A Future<Map<String, dynamic>?>
   Future<Map<String, dynamic>?> register(String name, String email,
       String password, String passwordConfirmation) async {
-    var client = http.Client();
-    var response = await client.post(url(endpoint: EndPoint.register),
-        headers: _header(),
+    try {
+      var client = http.Client();
+      var response = await client.post(
+        Globals(context).url(endpoint: EndPoint.register),
+        headers:
+            await Globals(context).headers(entries: entries, withToken: false),
         body: registrationModelToJson(RegistrationModel(
             name: name,
             email: email,
             password: password,
-            passwordConfirmation: passwordConfirmation)));
+            passwordConfirmation: passwordConfirmation)),
+      );
 
-    if (response.statusCode == 201) {
-      print(json.decode(response.body));
-      return json.decode(response.body);
-    } else {
-      print(json.decode(response.body));
-      return json.decode(response.body);
+      if (response.statusCode == 201) {
+        print(json.decode(response.body));
+        return json.decode(response.body);
+      } else {
+        print(json.decode(response.body));
+        return json.decode(response.body);
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }

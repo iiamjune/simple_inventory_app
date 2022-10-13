@@ -12,78 +12,49 @@ class ProductService {
   ProductService(this.context);
   BuildContext context;
 
-  /// Creating a map of headers that will be used in the http requests.
-  static const MapEntry<String, String> _json =
-          MapEntry("Accept", "application/json"),
-      contentType = MapEntry("Content-Type", "application/json"),
-      accessControl = MapEntry("Access-Control-Allow-Origin", "*");
+  List<MapEntry<String, String>> entries = [accept, contentType, accessControl];
 
-  /// It takes a token as a parameter and returns a map of headers
+  /// It takes a token and a productID, and returns a ProductDataModel
   ///
   /// Args:
-  ///   token (String): The token that is returned from the login request.
-  ///
-  /// Returns:
-  ///   A Future<Map<String, String>>
-  Future<Map<String, String>> _header({required String token}) async {
-    MapEntry<String, String> auth = MapEntry("Authorization", "Bearer $token");
-    Map<String, String> content =
-        Map.fromEntries([_json, contentType, accessControl, auth]);
-    return content;
-  }
-
-  /// `url` takes an `endpoint` and `query` string and returns a `Uri` object
-  ///
-  /// Args:
-  ///   endpoint (String): The endpoint of the API you're trying to hit.
-  ///   query (String): This is the query string that you want to pass to the server.
-  ///
-  /// Returns:
-  ///   A Uri object.
-  Uri url({String endpoint = "", String query = ""}) {
-    String endpointString = '$baseServerUrl$subString$endpoint';
-    String queryString = query.isNotEmpty ? '/$query' : '';
-    String fullString = '$endpointString$queryString';
-    return Uri.parse(fullString);
-  }
-
-  /// It takes a token and a productID as parameters, makes a GET request to the server, and returns a
-  /// ProductDataModel object if the request is successful
-  ///
-  /// Args:
-  ///   token (String): The token that is generated when the user logs in.
+  ///   token (String): The token that is returned from the login API
   ///   productID (String): The ID of the product you want to get.
   ///
   /// Returns:
   ///   A Future<ProductDataModel?>
   Future<ProductDataModel?> getProduct(
       {required String token, required String productID}) async {
-    var client = http.Client();
-    var response = await client.get(
-      url(endpoint: EndPoint.products, query: productID),
-      headers: await _header(token: token),
-    );
+    try {
+      var client = http.Client();
+      var response = await client.get(
+        Globals(context).url(
+            endpoint: EndPoint.products, query: productID, withQuery: true),
+        headers: await Globals(context).headers(entries: entries, token: token),
+      );
 
-    if (response.statusCode == 200) {
-      print(response.body);
-      return productDataModelFromJson(response.body);
-    } else {
-      print(response.body);
+      if (response.statusCode == 200) {
+        print(response.body);
+        return productDataModelFromJson(response.body);
+      } else {
+        print(response.body);
+      }
+      return null;
+    } catch (e) {
+      print(e);
     }
-    return null;
   }
 
   /// It takes in a token, productID, name, imageLink, description, price, and isPublished, and returns
-  /// a Map of dynamic values
+  /// a Map<String, dynamic>?
   ///
   /// Args:
-  ///   token (String): The token of the user who is logged in
+  ///   token (String): The token of the user
   ///   productID (String): The ID of the product you want to edit.
-  ///   name (String): name of the product
-  ///   imageLink (String): This is the link to the image that you want to upload.
-  ///   description (String): "This is a description"
+  ///   name (String): The name of the product
+  ///   imageLink (String): The image link of the product
+  ///   description (String): The description of the product
   ///   price (String): price,
-  ///   isPublished (bool): true/false
+  ///   isPublished (bool): is a boolean value
   ///
   /// Returns:
   ///   A Future<Map<String, dynamic>?>
@@ -95,37 +66,43 @@ class ProductService {
       required String description,
       required String price,
       required bool isPublished}) async {
-    var client = http.Client();
-    var response =
-        await client.put(url(endpoint: EndPoint.products, query: productID),
-            headers: await _header(token: token),
-            body: productModelToJson(ProductModel(
-              name: name,
-              imageLink: imageLink,
-              description: description,
-              price: price,
-              isPublished: isPublished,
-            )));
+    try {
+      var client = http.Client();
+      var response = await client.put(
+          Globals(context).url(
+              endpoint: EndPoint.products, query: productID, withQuery: true),
+          headers:
+              await Globals(context).headers(entries: entries, token: token),
+          body: productModelToJson(ProductModel(
+            name: name,
+            imageLink: imageLink,
+            description: description,
+            price: price,
+            isPublished: isPublished,
+          )));
 
-    if (response.statusCode == 201) {
-      print(json.decode(response.body));
-      return json.decode(response.body);
-    } else {
-      print(json.decode(response.body));
-      return json.decode(response.body);
+      if (response.statusCode == 201) {
+        print(json.decode(response.body));
+        return json.decode(response.body);
+      } else {
+        print(json.decode(response.body));
+        return json.decode(response.body);
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
-  /// It takes in a token, name, imageLink, description, price, and isPublished and returns a
+  /// It takes in a token, name, imageLink, description, price, and isPublished, and returns a
   /// Map<String, dynamic>?
   ///
   /// Args:
-  ///   token (String): The token of the user who is adding the product
-  ///   name (String): name of the product
-  ///   imageLink (String): This is the link to the image that you want to upload.
-  ///   description (String): "This is a description"
+  ///   token (String): The token of the user who is logged in
+  ///   name (String): The name of the product
+  ///   imageLink (String): The image link of the product
+  ///   description (String): String,
   ///   price (String): price,
-  ///   isPublished (bool): true,
+  ///   isPublished (bool): is a boolean value
   ///
   /// Returns:
   ///   A Future<Map<String, dynamic>?>
@@ -136,51 +113,67 @@ class ProductService {
       required String description,
       required String price,
       required bool isPublished}) async {
-    var client = http.Client();
-    var response = await client.post(url(endpoint: EndPoint.products),
-        headers: await _header(token: token),
-        body: productModelToJson(ProductModel(
-          name: name,
-          imageLink: imageLink,
-          description: description,
-          price: price,
-          isPublished: isPublished,
-        )));
+    try {
+      var client = http.Client();
+      var response = await client.post(
+          Globals(context).url(endpoint: EndPoint.products),
+          headers:
+              await Globals(context).headers(entries: entries, token: token),
+          body: productModelToJson(ProductModel(
+            name: name,
+            imageLink: imageLink,
+            description: description,
+            price: price,
+            isPublished: isPublished,
+          )));
 
-    if (response.statusCode == 201) {
-      print(json.decode(response.body));
-      return json.decode(response.body);
-    } else {
-      print(json.decode(response.body));
-      return json.decode(response.body);
+      if (response.statusCode == 201) {
+        print(json.decode(response.body));
+        return json.decode(response.body);
+      } else {
+        print(json.decode(response.body));
+        return json.decode(response.body);
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
   /// It takes a token and a productID as required parameters, and then it makes a DELETE request to the
-  /// server, and returns the response body as a JSON object
+  /// server, and returns the response body as an integer.
+  /// </code>
   ///
   /// Args:
-  ///   token (String): The token that is returned from the login function.
-  ///   productID (String): The ID of the product you want to delete.
+  ///   token (String): The token of the user
+  ///   productID (String): The ID of the product to be deleted
   ///
   /// Returns:
-  ///   The response from the server.
+  ///   The result of the delete request.
   Future<int> deleteProduct({
     required String token,
     required String productID,
   }) async {
-    var client = http.Client();
-    var response = await client.delete(
-      url(endpoint: EndPoint.products, query: productID),
-      headers: await _header(token: token),
-    );
+    int result = 0;
+    try {
+      var client = http.Client();
+      var response = await client.delete(
+        Globals(context).url(
+            endpoint: EndPoint.products, query: productID, withQuery: true),
+        headers: await Globals(context).headers(entries: entries, token: token),
+      );
 
-    if (response.statusCode == 200) {
-      print(json.decode(response.body));
-      return json.decode(response.body);
-    } else {
-      print(json.decode(response.body));
-      return json.decode(response.body);
+      if (response.statusCode == 200) {
+        result = json.decode(response.body);
+        print(result);
+        return result;
+      } else {
+        result = json.decode(response.body);
+        print(result);
+        return result;
+      }
+    } catch (e) {
+      print(e);
     }
+    return result;
   }
 }

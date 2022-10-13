@@ -10,41 +10,10 @@ class LoginService {
   LoginService(this.context);
   BuildContext context;
 
-  /// Creating a map of headers.
-  static const MapEntry<String, String> _json =
-          MapEntry("Accept", "application/json"),
-      contentType = MapEntry("Content-Type", "application/json"),
-      accessControl = MapEntry("Access-Control-Allow-Origin", "*");
+  List<MapEntry<String, String>> entries = [accept, contentType, accessControl];
 
-  /// _header() returns a map of strings that contains the keys "Content-Type",
-  /// "Access-Control-Allow-Origin", and "Content-Type" with the values "application/json", "*", and
-  /// "application/json" respectively
-  ///
-  /// Returns:
-  ///   A map of strings.
-  Map<String, String> _header() {
-    Map<String, String> content =
-        Map.fromEntries([_json, contentType, accessControl]);
-    return content;
-  }
-
-  /// It takes an endpoint and a query, and returns a Uri
-  ///
-  /// Args:
-  ///   endpoint (String): The endpoint of the API you're trying to hit.
-  ///   query (String): This is the query string that you want to pass to the server.
-  ///
-  /// Returns:
-  ///   A Uri object.
-  Uri url({String endpoint = "", String query = ""}) {
-    String endpointString = '$baseServerUrl$subString$endpoint';
-    String queryString = query.isNotEmpty ? query : '';
-    String fullString = '$endpointString$queryString';
-    return Uri.parse(fullString);
-  }
-
-  /// It takes an email and password, sends a POST request to the server, and returns a Map<String,
-  /// dynamic>? (which is a Map of String keys and dynamic values, or null)
+  /// It takes in an email and password, sends a POST request to the server, and returns a Map<String,
+  /// dynamic>?
   ///
   /// Args:
   ///   email (String): email,
@@ -53,20 +22,27 @@ class LoginService {
   /// Returns:
   ///   A Future<Map<String, dynamic>?>
   Future<Map<String, dynamic>?> login(String email, String password) async {
-    var client = http.Client();
-    var response = await client.post(url(endpoint: EndPoint.login),
-        headers: _header(),
+    try {
+      var client = http.Client();
+      var response = await client.post(
+        Globals(context).url(endpoint: EndPoint.login),
+        headers:
+            await Globals(context).headers(entries: entries, withToken: false),
         body: loginModelToJson(LoginModel(
           email: email,
           password: password,
-        )));
+        )),
+      );
 
-    if (response.statusCode == 201) {
-      print(json.decode(response.body));
-      return json.decode(response.body);
-    } else {
-      print(json.decode(response.body));
-      return json.decode(response.body);
+      if (response.statusCode == 201) {
+        print(json.decode(response.body));
+        return json.decode(response.body);
+      } else {
+        print(json.decode(response.body));
+        return json.decode(response.body);
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }
