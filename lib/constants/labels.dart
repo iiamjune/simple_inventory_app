@@ -35,7 +35,8 @@ class Label {
       deleteUnsuccessful = "Delete unsuccessful",
       editProduct = "Edit Product",
       editSuccessful = "Edit successful",
-      addSuccessful = "Add successful";
+      addSuccessful = "Add successful",
+      noProducts = "No products";
 }
 
 class ErrorMessage {

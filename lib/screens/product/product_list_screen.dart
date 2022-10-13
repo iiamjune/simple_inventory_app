@@ -148,7 +148,15 @@ class _ProductListState extends State<ProductList> {
       ),
       body: Visibility(
         visible: isDataLoaded && products.isNotEmpty,
-        replacement: const Center(child: CircularProgressIndicator()),
+        replacement: Center(
+            child: Text(
+          Label.noProducts,
+          style: TextStyle(
+            color: Colors.indigo[600],
+            fontWeight: FontWeight.bold,
+            fontSize: 20.0,
+          ),
+        )),
         child: Column(
           children: [
             Expanded(
