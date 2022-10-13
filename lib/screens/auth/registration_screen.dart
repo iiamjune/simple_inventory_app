@@ -98,7 +98,9 @@ class _RegistrationState extends State<Registration> {
     });
 
     setState(() {
-      isProcessing = false;
+      Future.delayed(const Duration(seconds: 3)).then((value) {
+        isProcessing = false;
+      });
     });
   }
 
@@ -159,6 +161,17 @@ class _RegistrationState extends State<Registration> {
         confirmPasswordError = errors["password"][0];
       }
     }
+  }
+
+  /// If the user is not currently processing, then create an account
+  ///
+  /// Returns:
+  ///   The return statement is used to explicitly return from a method.
+  void onPressed() {
+    if (isProcessing) {
+      return;
+    }
+    createAccount();
   }
 
   @override
@@ -223,7 +236,7 @@ class _RegistrationState extends State<Registration> {
                   ),
                 ),
                 MainButton(
-                  onPressed: isProcessing ? null : createAccount,
+                  onPressed: onPressed,
                   buttonLabel: Label.createAccount,
                 ),
                 const Divider(
