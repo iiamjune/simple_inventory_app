@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_application_1/models/product/product_list_model.dart';
 import 'package:http/http.dart' as http;
 
 import '../../constants/endpoints.dart';
@@ -31,58 +30,46 @@ class ProductListService {
     return content;
   }
 
-  /// It takes an endpoint and a query, and returns a Uri
+  /// `url` takes an optional `endpoint` and `page` and returns a `Uri` object
   ///
   /// Args:
   ///   endpoint (String): The endpoint of the API you're trying to hit.
-  ///   query (String): This is the query string that you want to pass to the server.
+  ///   page (int): The page number to request.
   ///
   /// Returns:
   ///   A Uri object.
-  Uri url({String endpoint = "", String page = ""}) {
+  Uri url({String endpoint = "", int? page}) {
     String endpointString = '$baseServerUrl$subString$endpoint';
-    String queryString = page.isNotEmpty ? '?page=$page' : '';
+    String queryString = page != null ? '?page=$page' : '';
     String fullString = '$endpointString$queryString';
     return Uri.parse(fullString);
   }
 
-  /// It makes a GET request to the server, and if the response is successful, it returns a list of
-  /// products
+  /// It takes a token and a page number as parameters, and returns a map of dynamic data
   ///
   /// Args:
   ///   token (String): The token that is returned from the login request.
+  ///   pageNumber (int): The page number of the products you want to fetch.
   ///
   /// Returns:
-  ///   A Future<List<ProductListModel>?>
-  Future<List<ProductListModel>?> getProducts({required String token}) async {
-    var client = http.Client();
-    var response = await client.get(
-      url(endpoint: EndPoint.products),
-      headers: await _header(token: token),
-    );
-
-    if (response.statusCode == 200) {
-      print(json.decode(response.body));
-      var data = json.decode(response.body)["data"];
-      return productListModelFromJson(json.encode(data));
-    } else {
-      print(response.body);
-    }
-  }
-
+  ///   A Future<Map<String, dynamic>?>
   Future<Map<String, dynamic>?> getResponse(
-      {required String token, String pageNumber = "1"}) async {
-    var client = http.Client();
-    var response = await client.get(
-      url(endpoint: EndPoint.products, page: pageNumber),
-      headers: await _header(token: token),
-    );
+      {required String token, int? pageNumber}) async {
+    try {
+      var client = http.Client();
+      var response = await client.get(
+        url(endpoint: EndPoint.products, page: pageNumber),
+        headers: await _header(token: token),
+      );
 
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      return data;
-    } else {
-      print(response.body);
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        return data;
+      } else {
+        print(response.body);
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }

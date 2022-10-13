@@ -83,9 +83,6 @@ class _RegistrationState extends State<Registration> {
     Future.delayed(const Duration(seconds: 2)).then((value) {
       if (success) {
         SharedPref(context).setString("token", token!);
-        SharedPref(context).setString("email", emailController.text);
-        SharedPref(context)
-            .setString("password", passwordConfirmationController.text);
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Token: ${token!}")));
         Popup(context).showSuccess(

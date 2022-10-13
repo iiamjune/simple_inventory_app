@@ -5,6 +5,7 @@ import 'package:flutter_application_1/models/product/product_list_model.dart';
 import 'package:flutter_application_1/services/auth/logout_service.dart';
 import 'package:flutter_application_1/services/product/product_list_service.dart';
 import 'package:flutter_application_1/services/product/product_service.dart';
+import 'package:flutter_application_1/services/shared_preferences_service.dart';
 import 'package:flutter_application_1/widgets/dialog.dart';
 import 'package:number_pagination/number_pagination.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,14 +37,11 @@ class _ProductListState extends State<ProductList> {
 
   /// It gets the logout data from the server and sets the state of the widget
   void getLogoutData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     logoutData = (await LogoutService(context).logout(token: token!));
     setState(() {
       if (logoutData!.containsKey("message")) {
         if (logoutData?["message"] == "Logged out") {
-          for (var element in ["token", "email", "password", "currentPage"]) {
-            prefs.remove(element);
-          }
+          SharedPref(context).remove("token");
           success = true;
           message = logoutData?["message"];
         } else {
@@ -54,20 +52,12 @@ class _ProductListState extends State<ProductList> {
     });
   }
 
-  /// It gets the token from the shared preferences and then calls the getProducts function from the
-  /// ProductListService class
-  void getProductsData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString("token");
-    products = (await ProductListService(context).getProducts(token: token!))!;
-    setState(() {
-      isDataLoaded = true;
-    });
-  }
-
-  void getResponseData({String pageNumber = ""}) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString("token");
+  /// It gets the response from the API and then parses the response into a model
+  ///
+  /// Args:
+  ///   pageNumber (String): The page number to be loaded.
+  void getResponseData({int? pageNumber}) async {
+    token = await SharedPref(context).getString("token");
     responseData = (await ProductListService(context)
         .getResponse(token: token!, pageNumber: pageNumber))!;
     products = productListModelFromJson(json.encode(responseData["data"]));
@@ -111,8 +101,6 @@ class _ProductListState extends State<ProductList> {
 
   /// It handles logout process
   void logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString("token");
     getLogoutData();
 
     Future.delayed(const Duration(seconds: 2)).then((value) {
@@ -128,7 +116,7 @@ class _ProductListState extends State<ProductList> {
   }
 
   void initData() {
-    getResponseData(pageNumber: currentPage.toString());
+    getResponseData(pageNumber: currentPage);
   }
 
   @override
@@ -248,17 +236,15 @@ class _ProductListState extends State<ProductList> {
                   NumberPagination(
                     fontSize: 10.0,
                     colorPrimary: Colors.indigo,
-                    onPageChanged: (pageNumber) async {
-                      final SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      prefs.setInt("currentPage", pageNumber);
+                    onPageChanged: (pageNumber) {
                       setState(() {
                         currentPage = pageNumber;
-                        getResponseData(pageNumber: pageNumber.toString());
+                        getResponseData(pageNumber: pageNumber);
                       });
                     },
                     pageTotal: pageTotal ?? 0,
                     pageInit: 1,
+                    threshold: 3,
                   ),
                 ],
               ),

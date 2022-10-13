@@ -8,7 +8,6 @@ class AuthService {
   Future<bool> isLoggedIn() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.containsKey("token")) {
-      print(prefs.getString("token"));
       return true;
     }
     return false;
