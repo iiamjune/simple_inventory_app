@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/auth/registration_service.dart';
+import 'package:flutter_application_1/services/shared_preferences_service.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/auth_page_footer.dart';
 import 'package:flutter_application_1/widgets/popup.dart';
 import 'package:flutter_application_1/widgets/textformfield.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/labels.dart';
-import '../../services/navigation.dart';
+import '../../services/navigation_service.dart';
 
 class Registration extends StatefulWidget {
   const Registration({super.key});
@@ -79,14 +79,13 @@ class _RegistrationState extends State<Registration> {
   /// It waits for 2 seconds, then checks if the registration was successful, if it was, it saves the token to
   /// the shared preferences and opens a success popup widget that will navigate to the home screen, if it wasn't,
   /// it shows an error message
-  void registrationProcess() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
+  void registrationProcess() {
     Future.delayed(const Duration(seconds: 2)).then((value) {
       if (success) {
-        prefs.setString("token", token!);
-        prefs.setString("email", emailController.text);
-        prefs.setString("password", passwordConfirmationController.text);
+        SharedPref(context).setString("token", token!);
+        SharedPref(context).setString("email", emailController.text);
+        SharedPref(context)
+            .setString("password", passwordConfirmationController.text);
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Token: ${token!}")));
         Popup(context).showSuccess(

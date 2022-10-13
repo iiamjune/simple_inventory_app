@@ -4,10 +4,10 @@ import 'package:flutter_application_1/widgets/appbar.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/auth_page_footer.dart';
 import 'package:flutter_application_1/widgets/textformfield.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/labels.dart';
 import '../../services/navigation_service.dart';
+import '../../services/shared_preferences_service.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -66,14 +66,12 @@ class _LoginState extends State<Login> {
   /// It waits for 2 seconds, then checks if the login was successful, if it was, it saves the token to
   /// the shared preferences and navigates back to the home screen, if it wasn't, it shows an error
   /// message
-  void loginProcess() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
+  void loginProcess() {
     Future.delayed(const Duration(seconds: 2)).then((value) {
       if (success) {
-        prefs.setString("token", token!);
-        prefs.setString("email", emailController.text);
-        prefs.setString("password", passwordController.text);
+        SharedPref(context).setString("token", token!);
+        SharedPref(context).setString("email", emailController.text);
+        SharedPref(context).setString("password", passwordController.text);
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Token: ${token!}")));
         Navigation(context).backToProductList();
