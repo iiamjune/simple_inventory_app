@@ -34,12 +34,19 @@ class _EditProductScreenState extends State<EditProductScreen> {
   List<bool> dropdownItems = [true, false];
   bool isPublished = false;
   Map<String, dynamic>? data = {};
+  Map<String, dynamic>? errors = {};
   bool success = false;
   String? errorMessage;
   String appbarTitle = Label.singleProduct;
   bool urlIsValid = false;
   bool isProcessing = false;
+  String? productNameError;
+  String? imageLinkError;
+  String? priceError;
+  String? priceFormatError;
+  String? price;
 
+  /// It gets the data from the server and then set the data to the textfield
   void initData() async {
     token = await SharedPref(context).getString("token");
     productID = await SharedPref(context).getString("productID");
@@ -55,29 +62,75 @@ class _EditProductScreenState extends State<EditProductScreen> {
     setState(() {});
   }
 
+  /// It gets the data from the text fields and sends it to the server
   void getEditData() async {
     setState(() {
       isProcessing = true;
     });
+    setState(() {
+      if (priceController.text.isNotEmpty) {
+        if (validatePrice(priceController.text)) {
+          priceFormatError = null;
+          price = priceController.text;
+        } else {
+          price = "";
+          priceFormatError = null;
+          priceFormatError = ErrorMessage.invalidPrice;
+        }
+      } else {
+        priceFormatError = null;
+        price = priceController.text;
+      }
+    });
+
     data = await ProductService(context).editProduct(
       token: token!,
       productID: productID!,
       name: productNameController.text,
       imageLink: imageLinkController.text,
       description: descriptionController.text,
-      price: priceController.text,
+      price: price!,
       isPublished: isPublished,
     );
     setState(() {
       if (data!.containsKey("errors")) {
         success = false;
         errorMessage = data?["message"];
-      } else {
+        productNameError = null;
+        imageLinkError = null;
+        priceError = null;
+        errors = null;
+        errors = data?["errors"];
+        if (errors!.containsKey("price") && priceFormatError != null) {
+          errors?["price"].insert(0, priceFormatError);
+        }
+      }
+      if (data!.containsKey("id")) {
         success = true;
+      }
+      if (success) {
+        isEditing = false;
+        appbarTitle = Label.singleProduct;
+        errors = null;
+        priceError = null;
+      }
+    });
+    setState(() {
+      if (errors != null) {
+        storeProductNameError(errors);
+        storeImageLinkError(errors);
+        storePriceError(errors);
       }
     });
   }
 
+  /// If the value of isPublished is 1, return true, otherwise return false
+  ///
+  /// Args:
+  ///   isPublished (int): 1 or 0
+  ///
+  /// Returns:
+  ///   a boolean value.
   bool publishStatus(int isPublished) {
     if (isPublished == 1) {
       return true;
@@ -85,13 +138,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return false;
   }
 
+  /// If the user is not editing, then set the isEditing variable to true and change the appbar title to
+  /// "Edit Product". If the user is editing, then get the data from the form and send it to the server.
+  /// If the server responds with a success message, then show a snackbar with a success message. If the
+  /// server responds with an error message, then show a snackbar with the error message. After 3
+  /// seconds, set the isProcessing variable to false
   void process() {
     if (!isEditing) {
       isEditing = true;
       appbarTitle = Label.editProduct;
     } else {
-      isEditing = false;
-      appbarTitle = Label.singleProduct;
       getEditData();
 
       Future.delayed(const Duration(seconds: 2)).then((value) {
@@ -113,6 +169,55 @@ class _EditProductScreenState extends State<EditProductScreen> {
       });
     }
     setState(() {});
+  }
+
+  /// If the errors map contains a key called "name", then set the productNameError variable to the
+  /// first element of the array that is the value of the "name" key
+  ///
+  /// Args:
+  ///   errors (Map<String, dynamic>): The errors returned from the server.
+  void storeProductNameError(Map<String, dynamic>? errors) {
+    if (errors!.containsKey("name")) {
+      productNameError = errors["name"][0];
+    }
+  }
+
+  /// If the errors map contains a key called image_link, then set the imageLinkError variable to the
+  /// first element of the array that is the value of the image_link key
+  ///
+  /// Args:
+  ///   errors (Map<String, dynamic>): The errors returned from the server.
+  void storeImageLinkError(Map<String, dynamic>? errors) {
+    if (errors!.containsKey("image_link")) {
+      imageLinkError = errors["image_link"][0];
+    }
+  }
+
+  /// If the errors map contains a key called price, then set the priceError variable to the first
+  /// element of the array that is the value of the price key
+  ///
+  /// Args:
+  ///   errors (Map<String, dynamic>): The errors returned from the server.
+  void storePriceError(Map<String, dynamic>? errors) {
+    if (errors!.containsKey("price")) {
+      priceError = errors["price"][0];
+    }
+  }
+
+  /// It takes a string, tries to parse it as a double, and returns true if it can be parsed as a
+  /// double, and false if it can't
+  ///
+  /// Args:
+  ///   price (String): The price of the item.
+  ///
+  /// Returns:
+  ///   A boolean value.
+  bool validatePrice(String price) {
+    final number = double.tryParse(price);
+    if (number == null) {
+      return false;
+    }
+    return true;
   }
 
   void checkUrlValidity(String url) async {
@@ -247,9 +352,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           const SizedBox(height: 20.0),
                           ProductField(
                             enabled: isEditing,
-                            controller: priceController,
-                            keyboardType: TextInputType.number,
                             label: Label.price,
+                            controller: priceController,
+                            errorText: priceError,
+                            keyboardType: TextInputType.number,
                           ),
                           const SizedBox(height: 20.0),
                           ProductDropdown(

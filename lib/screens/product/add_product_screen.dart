@@ -35,10 +35,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
   String? priceFormatError;
   String? price;
 
+  /// `initData()` is an async function that gets the token from the shared preferences and assigns it
+  /// to the `token` variable
   void initData() async {
     token = await SharedPref(context).getString("token");
   }
 
+  /// It takes the data from the form and sends it to the server
   void getAddData() async {
     setState(() {
       isProcessing = true;
@@ -94,6 +97,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
     });
   }
 
+  /// It gets the data from the form, then waits 2 seconds, then checks if the data was successfully
+  /// added to the database, then shows a snackbar, then navigates back to the product list page, then
+  /// waits 3 seconds, then checks if the data was successfully added to the database, then sets the
+  /// isProcessing variable to false
   void addProduct() {
     getAddData();
 
@@ -119,25 +126,47 @@ class _AddProductScreenState extends State<AddProductScreen> {
     });
   }
 
+  /// If the errors map contains a key called "name", then set the productNameError variable to the
+  /// first element of the array that is the value of the "name" key
+  ///
+  /// Args:
+  ///   errors (Map<String, dynamic>): The errors returned from the server.
   void storeProductNameError(Map<String, dynamic>? errors) {
     if (errors!.containsKey("name")) {
       productNameError = errors["name"][0];
     }
   }
 
+  /// If the errors map contains a key called image_link, then set the imageLinkError variable to the
+  /// first element of the array that is the value of the image_link key
+  ///
+  /// Args:
+  ///   errors (Map<String, dynamic>): The errors returned from the server.
   void storeImageLinkError(Map<String, dynamic>? errors) {
     if (errors!.containsKey("image_link")) {
       imageLinkError = errors["image_link"][0];
     }
   }
 
+  /// If the errors map contains a key called price, then set the priceError variable to the first
+  /// element of the array that is the value of the price key
+  ///
+  /// Args:
+  ///   errors (Map<String, dynamic>): The errors returned from the server.
   void storePriceError(Map<String, dynamic>? errors) {
     if (errors!.containsKey("price")) {
       priceError = errors["price"][0];
-      final number = num.tryParse("0.6");
     }
   }
 
+  /// It takes a string and tries to convert it to a double. If it can't, it returns false. If it can,
+  /// it returns true
+  ///
+  /// Args:
+  ///   price (String): The price of the item.
+  ///
+  /// Returns:
+  ///   A boolean value.
   bool validatePrice(String price) {
     final number = double.tryParse(price);
     if (number == null) {
