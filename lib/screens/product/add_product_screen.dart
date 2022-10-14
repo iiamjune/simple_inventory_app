@@ -27,12 +27,16 @@ class _AddProductState extends State<AddProduct> {
   bool success = false;
   String? errorMessage;
   String? token;
+  bool isProcessing = false;
 
   void initData() async {
     token = await SharedPref(context).getString("token");
   }
 
   void getAddData() async {
+    setState(() {
+      isProcessing = true;
+    });
     data = await ProductService(context).addProduct(
       token: token!,
       name: productNameController.text,
@@ -66,7 +70,14 @@ class _AddProductState extends State<AddProduct> {
             : null;
       }
     });
-    setState(() {});
+
+    Future.delayed(const Duration(seconds: 3)).then((value) {
+      if (!success) {
+        setState(() {
+          isProcessing = false;
+        });
+      }
+    });
   }
 
   @override
@@ -152,8 +163,9 @@ class _AddProductState extends State<AddProduct> {
                       ),
                     ),
                     MainButton(
-                      onPressed: addProduct,
                       buttonLabel: Label.add,
+                      isProcessing: isProcessing,
+                      process: addProduct,
                     ),
                   ],
                 ),

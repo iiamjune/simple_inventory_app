@@ -81,10 +81,12 @@ class _LoginState extends State<Login> {
       }
     });
 
-    setState(() {
-      Future.delayed(const Duration(seconds: 3)).then((value) {
-        isProcessing = false;
-      });
+    Future.delayed(const Duration(seconds: 3)).then((value) {
+      if (!success) {
+        setState(() {
+          isProcessing = false;
+        });
+      }
     });
   }
 
@@ -114,18 +116,6 @@ class _LoginState extends State<Login> {
     if (errors!.containsKey("password")) {
       passwordError = errors["password"][0];
     }
-  }
-
-  /// If the user is already processing a login request, don't do anything. Otherwise, call the login
-  /// function
-  ///
-  /// Returns:
-  ///   The return statement is used to return from a function i.e. break out of the function.
-  void onPressed() {
-    if (isProcessing) {
-      return;
-    }
-    login();
   }
 
   @override
@@ -175,8 +165,9 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 MainButton(
-                  onPressed: onPressed,
                   buttonLabel: Label.login,
+                  isProcessing: isProcessing,
+                  process: login,
                 ),
                 const Divider(
                   color: Colors.grey,

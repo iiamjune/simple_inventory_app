@@ -38,6 +38,7 @@ class _EditProductState extends State<EditProduct> {
   String? errorMessage;
   String appbarTitle = Label.singleProduct;
   bool urlIsValid = false;
+  bool isProcessing = false;
 
   void initData() async {
     token = await SharedPref(context).getString("token");
@@ -55,6 +56,9 @@ class _EditProductState extends State<EditProduct> {
   }
 
   void getEditData() async {
+    setState(() {
+      isProcessing = true;
+    });
     data = await ProductService(context).editProduct(
       token: token!,
       productID: productID!,
@@ -81,7 +85,7 @@ class _EditProductState extends State<EditProduct> {
     return false;
   }
 
-  void onPressed() {
+  void process() {
     if (!isEditing) {
       isEditing = true;
       appbarTitle = Label.editProduct;
@@ -100,6 +104,12 @@ class _EditProductState extends State<EditProduct> {
                   .showSnackBar(SnackBar(content: Text(errorMessage!)))
               : null;
         }
+      });
+
+      Future.delayed(const Duration(seconds: 3)).then((value) {
+        setState(() {
+          isProcessing = false;
+        });
       });
     }
     setState(() {});
@@ -259,8 +269,10 @@ class _EditProductState extends State<EditProduct> {
                       ),
                     ),
                     MainButton(
-                      onPressed: onPressed,
+                      // onPressed: process,
                       buttonLabel: isEditing ? Label.save : Label.edit,
+                      isProcessing: isProcessing,
+                      process: process,
                     ),
                   ],
                 ),

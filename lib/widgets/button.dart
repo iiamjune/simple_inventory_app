@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
 
-class MainButton extends StatefulWidget {
+class MainButton extends StatelessWidget {
   const MainButton(
-      {super.key, required this.onPressed, required this.buttonLabel});
-  final VoidCallback? onPressed;
+      {super.key,
+      required this.buttonLabel,
+      this.isProcessing = false,
+      this.process});
   final String buttonLabel;
+  final bool isProcessing;
+  final Function()? process;
 
-  @override
-  State<MainButton> createState() => _MainButtonState();
-}
-
-class _MainButtonState extends State<MainButton> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.indigo[600]),
-        shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))),
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.indigo[600],
+        backgroundColor: Colors.indigo[600],
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+        disabledBackgroundColor: Colors.indigo[600]?.withOpacity(0.30),
       ),
-      onPressed: widget.onPressed,
+      onPressed: isProcessing ? null : process,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Text(
-          widget.buttonLabel,
+          buttonLabel,
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,

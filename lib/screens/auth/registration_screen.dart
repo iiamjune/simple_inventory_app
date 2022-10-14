@@ -119,10 +119,12 @@ class _RegistrationState extends State<Registration> {
       }
     });
 
-    setState(() {
-      Future.delayed(const Duration(seconds: 3)).then((value) {
-        isProcessing = false;
-      });
+    Future.delayed(const Duration(seconds: 3)).then((value) {
+      if (!success) {
+        setState(() {
+          isProcessing = false;
+        });
+      }
     });
   }
 
@@ -183,17 +185,6 @@ class _RegistrationState extends State<Registration> {
         confirmPasswordError = errors["password"][0];
       }
     }
-  }
-
-  /// If the user is not currently processing, then create an account
-  ///
-  /// Returns:
-  ///   The return statement is used to explicitly return from a method.
-  void onPressed() {
-    if (isProcessing) {
-      return;
-    }
-    createAccount();
   }
 
   bool validateEmail(String email) {
@@ -263,8 +254,9 @@ class _RegistrationState extends State<Registration> {
                   ),
                 ),
                 MainButton(
-                  onPressed: onPressed,
                   buttonLabel: Label.createAccount,
+                  isProcessing: isProcessing,
+                  process: createAccount,
                 ),
                 const Divider(
                   color: Colors.grey,
