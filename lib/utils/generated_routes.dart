@@ -17,37 +17,37 @@ class RouteGenerate {
         GoRoute(
           name: Routes.splash,
           path: '/',
-          builder: (context, state) => const Splash(),
+          builder: (context, state) => const SplashScreen(),
         ),
         GoRoute(
           name: Routes.register,
           path: '/register',
-          builder: (context, state) => const Registration(),
+          builder: (context, state) => const RegistrationScreen(),
         ),
         GoRoute(
           name: Routes.login,
           path: '/login',
-          builder: (context, state) => const Login(),
+          builder: (context, state) => const LoginScreen(),
         ),
         GoRoute(
           name: Routes.success,
           path: '/success',
-          builder: (context, state) => const Success(),
+          builder: (context, state) => const SuccessScreen(),
         ),
         GoRoute(
           name: Routes.productList,
           path: '/product_list',
-          builder: (context, state) => const ProductList(),
+          builder: (context, state) => const ProductListScreen(),
         ),
         GoRoute(
           name: Routes.editProduct,
           path: '/edit_product',
-          builder: (context, state) => const EditProduct(),
+          builder: (context, state) => const EditProductScreen(),
         ),
         GoRoute(
           name: Routes.addProduct,
           path: '/add_product',
-          builder: (context, state) => const AddProduct(),
+          builder: (context, state) => const AddProductScreen(),
         )
       ]);
 }

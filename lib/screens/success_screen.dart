@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../constants/labels.dart';
 
-class Success extends StatelessWidget {
-  const Success({super.key, this.message = 'Success', this.onContinue});
+class SuccessScreen extends StatelessWidget {
+  const SuccessScreen({super.key, this.message = 'Success', this.onContinue});
   final String? message;
   final VoidCallback? onContinue;
 

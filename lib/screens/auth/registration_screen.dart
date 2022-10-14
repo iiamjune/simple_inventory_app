@@ -11,14 +11,14 @@ import 'package:flutter_application_1/widgets/textformfield.dart';
 import '../../constants/labels.dart';
 import '../../services/navigation_service.dart';
 
-class Registration extends StatefulWidget {
-  const Registration({super.key});
+class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({super.key});
 
   @override
-  State<Registration> createState() => _RegistrationState();
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
-class _RegistrationState extends State<Registration> {
+class _RegistrationScreenState extends State<RegistrationScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();

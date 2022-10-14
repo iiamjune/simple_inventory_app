@@ -13,14 +13,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/labels.dart';
 import '../../services/navigation_service.dart';
 
-class ProductList extends StatefulWidget {
-  const ProductList({super.key});
+class ProductListScreen extends StatefulWidget {
+  const ProductListScreen({super.key});
 
   @override
-  State<ProductList> createState() => _ProductListState();
+  State<ProductListScreen> createState() => _ProductListScreenState();
 }
 
-class _ProductListState extends State<ProductList> {
+class _ProductListScreenState extends State<ProductListScreen> {
   Map<String, dynamic>? logoutData = {};
   String? message;
   String? token;

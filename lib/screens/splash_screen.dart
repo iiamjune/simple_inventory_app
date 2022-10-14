@@ -4,14 +4,14 @@ import '../constants/labels.dart';
 import '../services/auth/auth_service.dart';
 import '../services/navigation_service.dart';
 
-class Splash extends StatefulWidget {
-  const Splash({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<Splash> createState() => _SplashState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashState extends State<Splash> {
+class _SplashScreenState extends State<SplashScreen> {
   bool isLoggedIn = false;
   Map<String, dynamic>? data = {};
   Map<String, dynamic>? errors = {};

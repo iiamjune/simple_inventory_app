@@ -12,14 +12,14 @@ import '../../constants/labels.dart';
 import '../../models/product/product_data_model.dart';
 import '../../services/navigation_service.dart';
 
-class EditProduct extends StatefulWidget {
-  const EditProduct({super.key});
+class EditProductScreen extends StatefulWidget {
+  const EditProductScreen({super.key});
 
   @override
-  State<EditProduct> createState() => _EditProductState();
+  State<EditProductScreen> createState() => _EditProductScreenState();
 }
 
-class _EditProductState extends State<EditProduct> {
+class _EditProductScreenState extends State<EditProductScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isEditing = false;
   final TextEditingController idController = TextEditingController();

@@ -8,14 +8,14 @@ import '../../services/navigation_service.dart';
 import '../../services/product/product_service.dart';
 import '../../services/shared_preferences_service.dart';
 
-class AddProduct extends StatefulWidget {
-  const AddProduct({super.key});
+class AddProductScreen extends StatefulWidget {
+  const AddProductScreen({super.key});
 
   @override
-  State<AddProduct> createState() => _AddProductState();
+  State<AddProductScreen> createState() => _AddProductScreenState();
 }
 
-class _AddProductState extends State<AddProduct> {
+class _AddProductScreenState extends State<AddProductScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController imageLinkController = TextEditingController();

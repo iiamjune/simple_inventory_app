@@ -12,7 +12,7 @@ class Popup {
         enableDrag: false,
         context: context,
         builder: (context) {
-          return Success(
+          return SuccessScreen(
             message: message,
             onContinue: onTap,
           );
