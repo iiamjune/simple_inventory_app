@@ -24,10 +24,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final List<bool> dropdownItems = [true, false];
   bool isPublished = false;
   Map<String, dynamic>? data = {};
+  Map<String, dynamic>? errors = {};
   bool success = false;
   String? errorMessage;
   String? token;
   bool isProcessing = false;
+  String? productNameError;
+  String? imageLinkError;
+  String? priceError;
+  String? priceFormatError;
+  String? price;
 
   void initData() async {
     token = await SharedPref(context).getString("token");
@@ -37,20 +43,53 @@ class _AddProductScreenState extends State<AddProductScreen> {
     setState(() {
       isProcessing = true;
     });
+    setState(() {
+      if (priceController.text.isNotEmpty) {
+        if (validatePrice(priceController.text)) {
+          priceFormatError = null;
+          price = priceController.text;
+        } else {
+          price = "";
+          priceFormatError = null;
+          priceFormatError = ErrorMessage.invalidPrice;
+        }
+      } else {
+        priceFormatError = null;
+        price = priceController.text;
+      }
+    });
+
     data = await ProductService(context).addProduct(
       token: token!,
       name: productNameController.text,
       imageLink: imageLinkController.text,
       description: descriptionController.text,
-      price: priceController.text,
+      price: price!,
       isPublished: isPublished,
     );
+
     setState(() {
       if (data!.containsKey("errors")) {
         success = false;
         errorMessage = data?["message"];
-      } else {
+        productNameError = null;
+        imageLinkError = null;
+        priceError = null;
+        errors = null;
+        errors = data?["errors"];
+        if (errors!.containsKey("price") && priceFormatError != null) {
+          errors?["price"].insert(0, priceFormatError);
+        }
+      }
+      if (data!.containsKey("id")) {
         success = true;
+      }
+    });
+    setState(() {
+      if (errors != null) {
+        storeProductNameError(errors);
+        storeImageLinkError(errors);
+        storePriceError(errors);
       }
     });
   }
@@ -78,6 +117,33 @@ class _AddProductScreenState extends State<AddProductScreen> {
         });
       }
     });
+  }
+
+  void storeProductNameError(Map<String, dynamic>? errors) {
+    if (errors!.containsKey("name")) {
+      productNameError = errors["name"][0];
+    }
+  }
+
+  void storeImageLinkError(Map<String, dynamic>? errors) {
+    if (errors!.containsKey("image_link")) {
+      imageLinkError = errors["image_link"][0];
+    }
+  }
+
+  void storePriceError(Map<String, dynamic>? errors) {
+    if (errors!.containsKey("price")) {
+      priceError = errors["price"][0];
+      final number = num.tryParse("0.6");
+    }
+  }
+
+  bool validatePrice(String price) {
+    final number = double.tryParse(price);
+    if (number == null) {
+      return false;
+    }
+    return true;
   }
 
   @override
@@ -129,20 +195,26 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       child: Column(
                         children: <Widget>[
                           ProductField(
-                              controller: productNameController,
-                              label: Label.productName),
+                            label: Label.productName,
+                            controller: productNameController,
+                            errorText: productNameError,
+                          ),
                           const SizedBox(height: 20.0),
                           ProductField(
-                              controller: imageLinkController,
-                              label: Label.imageLink),
+                            label: Label.imageLink,
+                            controller: imageLinkController,
+                            errorText: imageLinkError,
+                          ),
                           const SizedBox(height: 20.0),
                           ProductField(
-                              controller: descriptionController,
-                              label: Label.description),
+                            label: Label.description,
+                            controller: descriptionController,
+                          ),
                           const SizedBox(height: 20.0),
                           ProductField(
-                            controller: priceController,
                             label: Label.price,
+                            controller: priceController,
+                            errorText: priceError,
                             keyboardType: TextInputType.number,
                           ),
                           const SizedBox(height: 20.0),

@@ -32,32 +32,31 @@ class _AuthTextFieldState extends State<AuthTextField> {
   }
 }
 
-class ProductField extends StatefulWidget {
+class ProductField extends StatelessWidget {
   const ProductField({
     super.key,
-    required this.controller,
     required this.label,
+    required this.controller,
+    this.errorText,
     this.enabled = true,
     this.keyboardType,
   });
-  final TextEditingController controller;
   final String label;
+  final TextEditingController controller;
+  final String? errorText;
   final bool enabled;
   final TextInputType? keyboardType;
 
   @override
-  State<ProductField> createState() => _ProductFieldState();
-}
-
-class _ProductFieldState extends State<ProductField> {
-  @override
   Widget build(BuildContext context) {
     return TextFormField(
-      enabled: widget.enabled,
-      controller: widget.controller,
-      keyboardType: widget.keyboardType,
+      enabled: enabled,
+      controller: controller,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
-          border: const OutlineInputBorder(), labelText: widget.label),
+          border: const OutlineInputBorder(),
+          labelText: label,
+          errorText: errorText),
     );
   }
 }

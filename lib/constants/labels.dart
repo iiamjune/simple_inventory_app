@@ -40,5 +40,6 @@ class Label {
 }
 
 class ErrorMessage {
-  static const invalidEmail = "Invalid email address.";
+  static const invalidEmail = "Invalid email address.",
+      invalidPrice = "Invalid price.";
 }
