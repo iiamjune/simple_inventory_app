@@ -34,6 +34,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   int? pageTotal;
   int? currentPage;
   int? lastPage;
+  bool isProcessing = false;
 
   /// It gets the logout data from the server and sets the state of the widget
   void getLogoutData() async {
@@ -57,6 +58,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
   /// Args:
   ///   pageNumber (String): The page number to be loaded.
   void getResponseData({int? pageNumber}) async {
+    setState(() {
+      isProcessing = true;
+    });
     token = await SharedPref(context).getString("token");
     responseData = (await ProductListService(context)
         .getResponse(token: token!, pageNumber: pageNumber))!;
@@ -65,6 +69,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     currentPage = responseData["current_page"];
     lastPage = responseData["last_page"];
     setState(() {
+      isProcessing = false;
       isDataLoaded = true;
     });
   }
@@ -149,14 +154,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
       body: Visibility(
         visible: isDataLoaded && products.isNotEmpty,
         replacement: Center(
-            child: Text(
-          Label.noProducts,
-          style: TextStyle(
-            color: Colors.indigo[600],
-            fontWeight: FontWeight.bold,
-            fontSize: 20.0,
-          ),
-        )),
+            child: !isProcessing
+                ? Text(
+                    Label.noProducts,
+                    style: TextStyle(
+                      color: Colors.indigo[600],
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                    ),
+                  )
+                : const CircularProgressIndicator()),
         child: Column(
           children: [
             Expanded(
