@@ -203,12 +203,26 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             children: [
                               ListTile(
                                 contentPadding: const EdgeInsets.only(
-                                    top: 15.0, bottom: 15.0, right: 20.0),
-                                leading: CircleAvatar(
-                                  radius: 50.0,
-                                  backgroundColor: Colors.indigo[600],
-                                  backgroundImage:
-                                      NetworkImage(products[index].imageLink),
+                                    left: 20.0,
+                                    top: 15.0,
+                                    bottom: 15.0,
+                                    right: 20.0),
+                                leading: ClipOval(
+                                  child: Material(
+                                    color: Colors.indigo[600],
+                                    child: Image.network(
+                                      products[index].imageLink,
+                                      fit: BoxFit.cover,
+                                      width: 50.0,
+                                      height: 50.0,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        print(error);
+                                        return Image.network(
+                                            "https://cdn-icons-png.flaticon.com/512/71/71768.png");
+                                      },
+                                    ),
+                                  ),
                                 ),
                                 title: Text(products[index].name),
                                 subtitle: Text(products[index]

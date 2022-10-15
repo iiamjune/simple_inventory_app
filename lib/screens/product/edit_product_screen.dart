@@ -1,12 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/product/product_service.dart';
 import 'package:flutter_application_1/services/shared_preferences_service.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/dropdown.dart';
 import 'package:flutter_application_1/widgets/textformfield.dart';
-import 'package:http/http.dart' as http;
+import 'package:validators/validators.dart';
 
 import '../../constants/labels.dart';
 import '../../models/product/product_data_model.dart';
@@ -69,7 +67,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     });
     setState(() {
       if (priceController.text.isNotEmpty) {
-        if (validatePrice(priceController.text)) {
+        if (isPriceValid(priceController.text)) {
           priceFormatError = null;
           price = priceController.text;
         } else {
@@ -212,7 +210,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   ///
   /// Returns:
   ///   A boolean value.
-  bool validatePrice(String price) {
+  bool isPriceValid(String price) {
     final number = double.tryParse(price);
     if (number == null) {
       return false;
@@ -220,26 +218,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return true;
   }
 
-  void checkUrlValidity(String url) async {
-    try {
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        urlIsValid = true;
-      }
-    } on SocketException {
-      urlIsValid = false;
-    }
-
-    urlIsValid = false;
+  bool isImageLinkValid(String url) {
+    return isURL(url, requireTld: false);
   }
 
-  String getUrl(String url) {
-    checkUrlValidity(url);
-    if (urlIsValid) {
+  String getImageLink(String url) {
+    try {
+      NetworkImage(url);
       return url;
+    } catch (e) {
+      print(e);
+      return "https://cdn-icons-png.flaticon.com/512/71/71768.png";
     }
-    return "https://cdn-icons-png.flaticon.com/512/71/71768.png";
   }
 
   @override
@@ -296,7 +286,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           radius: 40.0,
                           backgroundColor: Colors.indigo[600],
                           backgroundImage: productData?.imageLink != null
-                              ? NetworkImage(productData!.imageLink)
+                              ? NetworkImage(
+                                  getImageLink(productData!.imageLink))
                               : null,
                         ),
                         Column(

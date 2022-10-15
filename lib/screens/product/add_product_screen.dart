@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/dropdown.dart';
 import 'package:flutter_application_1/widgets/textformfield.dart';
+import 'package:validators/validators.dart';
 
 import '../../constants/labels.dart';
 import '../../services/navigation_service.dart';
@@ -31,9 +32,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
   bool isProcessing = false;
   String? productNameError;
   String? imageLinkError;
+  String? imageLinkFormatError;
+  String? imageLink;
   String? priceError;
   String? priceFormatError;
   String? price;
+  bool urlIsValid = false;
 
   /// `initData()` is an async function that gets the token from the shared preferences and assigns it
   /// to the `token` variable
@@ -48,7 +52,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     });
     setState(() {
       if (priceController.text.isNotEmpty) {
-        if (validatePrice(priceController.text)) {
+        if (isPriceValid(priceController.text)) {
           priceFormatError = null;
           price = priceController.text;
         } else {
@@ -60,12 +64,25 @@ class _AddProductScreenState extends State<AddProductScreen> {
         priceFormatError = null;
         price = priceController.text;
       }
+      if (imageLinkController.text.isNotEmpty) {
+        if (isImageLinkValid(imageLinkController.text)) {
+          imageLinkFormatError = null;
+          imageLink = imageLinkController.text;
+        } else {
+          imageLink = "";
+          imageLinkFormatError = null;
+          imageLinkFormatError = ErrorMessage.invalidImageLink;
+        }
+      } else {
+        imageLinkFormatError = null;
+        imageLink = imageLinkController.text;
+      }
     });
 
     data = await ProductService(context).addProduct(
       token: token!,
       name: productNameController.text,
-      imageLink: imageLinkController.text,
+      imageLink: imageLink!,
       description: descriptionController.text,
       price: price!,
       isPublished: isPublished,
@@ -82,6 +99,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
         errors = data?["errors"];
         if (errors!.containsKey("price") && priceFormatError != null) {
           errors?["price"].insert(0, priceFormatError);
+        }
+        if (errors!.containsKey("image_link") && imageLinkFormatError != null) {
+          errors?["image_link"].insert(0, imageLinkFormatError);
         }
       }
       if (data!.containsKey("id")) {
@@ -167,12 +187,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
   ///
   /// Returns:
   ///   A boolean value.
-  bool validatePrice(String price) {
+  bool isPriceValid(String price) {
     final number = double.tryParse(price);
     if (number == null) {
       return false;
     }
     return true;
+  }
+
+  bool isImageLinkValid(String url) {
+    return isURL(url, requireTld: false);
   }
 
   @override
