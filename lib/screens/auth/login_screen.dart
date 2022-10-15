@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/services/auth/login_service.dart';
+import 'package:flutter_application_1/repositories/auth_repository.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/auth_page_footer.dart';
@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       isProcessing = true;
     });
-    data = (await LoginService(context)
+    data = (await AuthRepository(context)
         .login(emailController.text, passwordController.text));
     setState(() {
       if (data!.containsKey("message")) {

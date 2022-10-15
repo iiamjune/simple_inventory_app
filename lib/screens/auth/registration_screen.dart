@@ -1,6 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/services/auth/registration_service.dart';
+import 'package:flutter_application_1/repositories/auth_repository.dart';
 import 'package:flutter_application_1/services/shared_preferences_service.dart';
 import 'package:flutter_application_1/widgets/appbar.dart';
 import 'package:flutter_application_1/widgets/button.dart';
@@ -63,7 +63,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       }
     });
 
-    data = (await RegistrationService(context).register(
+    data = (await AuthRepository(context).register(
       nameController.text,
       email!,
       passwordController.text,

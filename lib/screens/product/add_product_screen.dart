@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/repositories/product_respository.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/dropdown.dart';
 import 'package:flutter_application_1/widgets/textformfield.dart';
@@ -6,7 +7,6 @@ import 'package:validators/validators.dart';
 
 import '../../constants/labels.dart';
 import '../../services/navigation_service.dart';
-import '../../services/product/product_service.dart';
 import '../../services/shared_preferences_service.dart';
 
 class AddProductScreen extends StatefulWidget {
@@ -79,7 +79,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       }
     });
 
-    data = await ProductService(context).addProduct(
+    data = await ProductRepository(context).addProduct(
       token: token!,
       name: productNameController.text,
       imageLink: imageLink!,

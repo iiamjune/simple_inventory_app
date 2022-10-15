@@ -1,18 +1,48 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_application_1/models/product/product_data_model.dart';
 import 'package:http/http.dart' as http;
 
-import '../../constants/endpoints.dart';
-import '../../constants/globals.dart';
-import '../../models/product/product_model.dart';
+import '../constants/endpoints.dart';
+import '../constants/globals.dart';
+import '../models/product/product_data_model.dart';
+import '../models/product/product_model.dart';
+import '../services/api_service.dart';
 
-class ProductService {
-  ProductService(this.context);
+class ProductRepository {
+  ProductRepository(this.context);
   BuildContext context;
 
   List<MapEntry<String, String>> entries = [accept, contentType, accessControl];
+
+  /// It takes a token and a page number as parameters, and returns a map of dynamic data
+  ///
+  /// Args:
+  ///   token (String): The token that is returned from the login API.
+  ///   pageNumber (int): The page number of the products to be fetched.
+  ///
+  /// Returns:
+  ///   A Future<Map<String, dynamic>?>
+  Future<Map<String, dynamic>?> getProductList(
+      {required String token, int? pageNumber}) async {
+    try {
+      var client = http.Client();
+      var response = await client.get(
+        ApiService(context).url(endpoint: EndPoint.products, page: pageNumber),
+        headers:
+            await ApiService(context).headers(entries: entries, token: token),
+      );
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        return data;
+      } else {
+        print(response.body);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   /// It takes a token and a productID, and returns a ProductDataModel
   ///
@@ -27,9 +57,10 @@ class ProductService {
     try {
       var client = http.Client();
       var response = await client.get(
-        Globals(context).url(
+        ApiService(context).url(
             endpoint: EndPoint.products, query: productID, withQuery: true),
-        headers: await Globals(context).headers(entries: entries, token: token),
+        headers:
+            await ApiService(context).headers(entries: entries, token: token),
       );
 
       if (response.statusCode == 200) {
@@ -69,10 +100,10 @@ class ProductService {
     try {
       var client = http.Client();
       var response = await client.put(
-          Globals(context).url(
+          ApiService(context).url(
               endpoint: EndPoint.products, query: productID, withQuery: true),
           headers:
-              await Globals(context).headers(entries: entries, token: token),
+              await ApiService(context).headers(entries: entries, token: token),
           body: productModelToJson(ProductModel(
             name: name,
             imageLink: imageLink,
@@ -97,10 +128,10 @@ class ProductService {
   /// Map<String, dynamic>?
   ///
   /// Args:
-  ///   token (String): The token of the user who is logged in
+  ///   token (String): The token of the user who is adding the product
   ///   name (String): The name of the product
   ///   imageLink (String): The image link of the product
-  ///   description (String): String,
+  ///   description (String): The description of the product
   ///   price (String): price,
   ///   isPublished (bool): is a boolean value
   ///
@@ -116,9 +147,9 @@ class ProductService {
     try {
       var client = http.Client();
       var response = await client.post(
-          Globals(context).url(endpoint: EndPoint.products),
+          ApiService(context).url(endpoint: EndPoint.products),
           headers:
-              await Globals(context).headers(entries: entries, token: token),
+              await ApiService(context).headers(entries: entries, token: token),
           body: productModelToJson(ProductModel(
             name: name,
             imageLink: imageLink,
@@ -157,9 +188,10 @@ class ProductService {
     try {
       var client = http.Client();
       var response = await client.delete(
-        Globals(context).url(
+        ApiService(context).url(
             endpoint: EndPoint.products, query: productID, withQuery: true),
-        headers: await Globals(context).headers(entries: entries, token: token),
+        headers:
+            await ApiService(context).headers(entries: entries, token: token),
       );
 
       if (response.statusCode == 200) {

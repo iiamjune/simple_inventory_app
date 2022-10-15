@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/services/product/product_service.dart';
+import 'package:flutter_application_1/repositories/product_respository.dart';
 import 'package:flutter_application_1/services/shared_preferences_service.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/dropdown.dart';
@@ -48,7 +48,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void initData() async {
     token = await SharedPref(context).getString("token");
     productID = await SharedPref(context).getString("productID");
-    productData = (await ProductService(context)
+    productData = (await ProductRepository(context)
         .getProduct(token: token!, productID: productID!));
     idController.text = productData?.id.toString() ?? "";
     userIDController.text = productData?.userId.toString() ?? "";
@@ -81,7 +81,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       }
     });
 
-    data = await ProductService(context).editProduct(
+    data = await ProductRepository(context).editProduct(
       token: token!,
       productID: productID!,
       name: productNameController.text,

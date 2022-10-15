@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constants/labels.dart';
-import '../services/auth/auth_service.dart';
+import '../services/auth_service.dart';
 import '../services/navigation_service.dart';
 
 class SplashScreen extends StatefulWidget {

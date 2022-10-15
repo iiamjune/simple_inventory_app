@@ -2,9 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/product/product_list_model.dart';
-import 'package:flutter_application_1/services/auth/logout_service.dart';
-import 'package:flutter_application_1/services/product/product_list_service.dart';
-import 'package:flutter_application_1/services/product/product_service.dart';
+import 'package:flutter_application_1/repositories/auth_repository.dart';
+import 'package:flutter_application_1/repositories/product_respository.dart';
 import 'package:flutter_application_1/services/shared_preferences_service.dart';
 import 'package:flutter_application_1/widgets/dialog.dart';
 import 'package:number_pagination/number_pagination.dart';
@@ -38,7 +37,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   /// It gets the logout data from the server and sets the state of the widget
   void getLogoutData() async {
-    logoutData = (await LogoutService(context).logout(token: token!));
+    logoutData = (await AuthRepository(context).logout(token: token!));
     setState(() {
       if (logoutData!.containsKey("message")) {
         if (logoutData?["message"] == "Logged out") {
@@ -62,8 +61,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
       isProcessing = true;
     });
     token = await SharedPref(context).getString("token");
-    responseData = (await ProductListService(context)
-        .getResponse(token: token!, pageNumber: pageNumber))!;
+    responseData = (await ProductRepository(context)
+        .getProductList(token: token!, pageNumber: pageNumber))!;
     products = productListModelFromJson(json.encode(responseData["data"]));
     pageTotal = responseData["last_page"];
     currentPage = responseData["current_page"];
@@ -86,7 +85,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   Future<bool> getDeleteData(result, index) async {
     bool deleteResult = false;
     if (result) {
-      deleteData = await ProductService(context).deleteProduct(
+      deleteData = await ProductRepository(context).deleteProduct(
           token: token!, productID: products[index].id.toString());
 
       String message;
