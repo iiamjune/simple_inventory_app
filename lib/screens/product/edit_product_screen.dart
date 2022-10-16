@@ -40,6 +40,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
   bool isProcessing = false;
   String? productNameError;
   String? imageLinkError;
+  String? imageLinkFormatError;
+  String? imageLink;
   String? priceError;
   String? priceFormatError;
   String? price;
@@ -79,13 +81,26 @@ class _EditProductScreenState extends State<EditProductScreen> {
         priceFormatError = null;
         price = priceController.text;
       }
+      if (imageLinkController.text.isNotEmpty) {
+        if (isImageLinkValid(imageLinkController.text)) {
+          imageLinkFormatError = null;
+          imageLink = imageLinkController.text;
+        } else {
+          imageLink = "";
+          imageLinkFormatError = null;
+          imageLinkFormatError = ErrorMessage.invalidImageLink;
+        }
+      } else {
+        imageLinkFormatError = null;
+        imageLink = imageLinkController.text;
+      }
     });
 
     data = await ProductRepository(context).editProduct(
       token: token!,
       productID: productID!,
       name: productNameController.text,
-      imageLink: imageLinkController.text,
+      imageLink: imageLink!,
       description: descriptionController.text,
       price: price!,
       isPublished: isPublished,
@@ -101,6 +116,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
         errors = data?["errors"];
         if (errors!.containsKey("price") && priceFormatError != null) {
           errors?["price"].insert(0, priceFormatError);
+        }
+        if (errors!.containsKey("image_link") && imageLinkFormatError != null) {
+          errors?["image_link"].insert(0, imageLinkFormatError);
         }
       }
       if (data!.containsKey("id")) {
@@ -222,16 +240,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return isURL(url, requireTld: false);
   }
 
-  String getImageLink(String url) {
-    try {
-      NetworkImage(url);
-      return url;
-    } catch (e) {
-      print(e);
-      return "https://cdn-icons-png.flaticon.com/512/71/71768.png";
-    }
-  }
-
   @override
   void initState() {
     initData();
@@ -270,42 +278,59 @@ class _EditProductScreenState extends State<EditProductScreen> {
               },
             ),
           ),
-          body: Form(
-              key: _formKey,
-              autovalidateMode: AutovalidateMode.disabled,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 50.0, vertical: 30.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        CircleAvatar(
-                          radius: 40.0,
-                          backgroundColor: Colors.indigo[600],
-                          backgroundImage: productData?.imageLink != null
-                              ? NetworkImage(
-                                  getImageLink(productData!.imageLink))
-                              : null,
+          body: SingleChildScrollView(
+            child: Form(
+                key: _formKey,
+                autovalidateMode: AutovalidateMode.disabled,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 50.0, vertical: 30.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Container(
+                        width: 200.0,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.indigo,
+                              width: 4.0,
+                            )),
+                        child: CircleAvatar(
+                          radius: 80.0,
+                          backgroundColor: Colors.white,
+                          child: isImageLinkValid(productData?.imageLink ?? "")
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(80.0),
+                                  child: Image.network(
+                                    productData!.imageLink,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(
+                                        Icons.error,
+                                        color: Colors.red,
+                                        size: 100.0,
+                                      );
+                                    },
+                                  ),
+                                )
+                              : const CircularProgressIndicator(),
                         ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            const Text(Label.createdAt),
-                            Text(
-                                productData?.createdAt.toIso8601String() ?? ""),
-                            const Text(Label.updatedAt),
-                            Text(
-                                productData?.updatedAt.toIso8601String() ?? ""),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SingleChildScrollView(
-                      child: Column(
+                      ),
+                      const SizedBox(height: 10.0),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          const Text(Label.createdAt),
+                          Text(productData?.createdAt.toIso8601String() ?? ""),
+                          const SizedBox(height: 5.0),
+                          const Text(Label.updatedAt),
+                          Text(productData?.updatedAt.toIso8601String() ?? ""),
+                        ],
+                      ),
+                      const SizedBox(height: 30.0),
+                      Column(
                         children: <Widget>[
                           Row(
                             children: <Widget>[
@@ -327,12 +352,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             enabled: isEditing,
                             controller: productNameController,
                             label: Label.productName,
+                            errorText: productNameError,
                           ),
                           const SizedBox(height: 20.0),
                           ProductField(
                             enabled: isEditing,
                             controller: imageLinkController,
                             label: Label.imageLink,
+                            errorText: imageLinkError,
                           ),
                           const SizedBox(height: 20.0),
                           ProductField(
@@ -364,16 +391,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           ),
                         ],
                       ),
-                    ),
-                    MainButton(
-                      // onPressed: process,
-                      buttonLabel: isEditing ? Label.save : Label.edit,
-                      isProcessing: isProcessing,
-                      process: process,
-                    ),
-                  ],
-                ),
-              )),
+                      const SizedBox(height: 20.0),
+                      MainButton(
+                        // onPressed: process,
+                        buttonLabel: isEditing ? Label.save : Label.edit,
+                        isProcessing: isProcessing,
+                        process: process,
+                      ),
+                    ],
+                  ),
+                )),
+          ),
         ),
       ),
     );

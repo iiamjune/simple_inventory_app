@@ -204,19 +204,34 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               ListTile(
                                 contentPadding: const EdgeInsets.only(
                                     top: 15.0, bottom: 15.0, right: 20.0),
-                                leading: CircleAvatar(
-                                  backgroundColor: Colors.grey,
-                                  radius: 50.0,
-                                  child: isURL(products[index].imageLink)
-                                      ? ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(50.0),
-                                          child: Image.network(
-                                            products[index].imageLink,
-                                            fit: BoxFit.contain,
-                                          ),
-                                        )
-                                      : const Icon(Icons.question_mark_rounded),
+                                leading: Container(
+                                  width: 100.0,
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.indigo, width: 4.0)),
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    radius: 50.0,
+                                    child: isURL(products[index].imageLink)
+                                        ? ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(50.0),
+                                            child: Image.network(
+                                              products[index].imageLink,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return const Icon(
+                                                  Icons.error,
+                                                  color: Colors.red,
+                                                  size: 30.0,
+                                                );
+                                              },
+                                            ),
+                                          )
+                                        : const CircularProgressIndicator(),
+                                  ),
                                 ),
                                 title: Transform.translate(
                                     offset: const Offset(-16, 0),
