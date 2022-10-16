@@ -8,6 +8,7 @@ import 'package:flutter_application_1/services/shared_preferences_service.dart';
 import 'package:flutter_application_1/widgets/dialog.dart';
 import 'package:number_pagination/number_pagination.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:validators/validators.dart';
 
 import '../../constants/labels.dart';
 import '../../services/navigation_service.dart';
@@ -202,31 +203,30 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             children: [
                               ListTile(
                                 contentPadding: const EdgeInsets.only(
-                                    left: 20.0,
-                                    top: 15.0,
-                                    bottom: 15.0,
-                                    right: 20.0),
-                                leading: ClipOval(
-                                  child: Material(
-                                    color: Colors.indigo[600],
-                                    child: Image.network(
-                                      products[index].imageLink,
-                                      fit: BoxFit.cover,
-                                      width: 50.0,
-                                      height: 50.0,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        print(error);
-                                        return Image.network(
-                                            "https://cdn-icons-png.flaticon.com/512/71/71768.png");
-                                      },
-                                    ),
-                                  ),
+                                    top: 15.0, bottom: 15.0, right: 20.0),
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.grey,
+                                  radius: 50.0,
+                                  child: isURL(products[index].imageLink)
+                                      ? ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                          child: Image.network(
+                                            products[index].imageLink,
+                                            fit: BoxFit.contain,
+                                          ),
+                                        )
+                                      : const Icon(Icons.question_mark_rounded),
                                 ),
-                                title: Text(products[index].name),
-                                subtitle: Text(products[index]
-                                    .updatedAt
-                                    .toIso8601String()),
+                                title: Transform.translate(
+                                    offset: const Offset(-16, 0),
+                                    child: Text(products[index].name)),
+                                subtitle: Transform.translate(
+                                  offset: const Offset(-16, 0),
+                                  child: Text(products[index]
+                                      .updatedAt
+                                      .toIso8601String()),
+                                ),
                                 trailing: Text(
                                   products[index].price,
                                   style: const TextStyle(
