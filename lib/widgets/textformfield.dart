@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AuthTextField extends StatefulWidget {
+class AuthTextField extends StatelessWidget {
   const AuthTextField({
     super.key,
     required this.label,
@@ -14,19 +14,14 @@ class AuthTextField extends StatefulWidget {
   final bool obscureText;
 
   @override
-  State<AuthTextField> createState() => _AuthTextFieldState();
-}
-
-class _AuthTextFieldState extends State<AuthTextField> {
-  @override
   Widget build(BuildContext context) {
     return TextFormField(
-      obscureText: widget.obscureText,
-      controller: widget.controller,
+      obscureText: obscureText,
+      controller: controller,
       decoration: InputDecoration(
           border: const OutlineInputBorder(),
-          labelText: widget.label,
-          errorText: widget.errorText),
+          labelText: label,
+          errorText: errorText),
     );
   }
 }
@@ -60,7 +55,7 @@ class ProductField extends StatelessWidget {
   }
 }
 
-class ProductIdField extends StatefulWidget {
+class ProductIdField extends StatelessWidget {
   const ProductIdField({
     super.key,
     required this.flex,
@@ -72,19 +67,14 @@ class ProductIdField extends StatefulWidget {
   final String label;
 
   @override
-  State<ProductIdField> createState() => _ProductIdFieldState();
-}
-
-class _ProductIdFieldState extends State<ProductIdField> {
-  @override
   Widget build(BuildContext context) {
     return Expanded(
-        flex: widget.flex,
+        flex: flex,
         child: TextFormField(
           enabled: false,
-          controller: widget.controller,
+          controller: controller,
           decoration: InputDecoration(
-              border: const OutlineInputBorder(), labelText: widget.label),
+              border: const OutlineInputBorder(), labelText: label),
         ));
   }
 }
