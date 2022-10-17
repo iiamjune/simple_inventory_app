@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_application_1/repositories/auth_repository_interface.dart';
 import 'package:http/http.dart' as http;
 
 import '../constants/endpoints.dart';
@@ -9,7 +10,7 @@ import '../models/auth/login_model.dart';
 import '../models/auth/registration_model.dart';
 import '../services/api_service.dart';
 
-class AuthRepository {
+class AuthRepository implements AuthRepositoryInterface {
   AuthRepository(this.context);
   BuildContext context;
 
@@ -25,6 +26,7 @@ class AuthRepository {
   ///
   /// Returns:
   ///   A Future<Map<String, dynamic>?>
+  @override
   Future<Map<String, dynamic>?> register(String name, String email,
       String password, String passwordConfirmation) async {
     try {
@@ -60,6 +62,7 @@ class AuthRepository {
   ///
   /// Returns:
   ///   A Future<Map<String, dynamic>?>
+  @override
   Future<Map<String, dynamic>?> login(String email, String password) async {
     try {
       var client = http.Client();
@@ -92,6 +95,7 @@ class AuthRepository {
   ///
   /// Returns:
   ///   A Future<Map<String, dynamic>?>
+  @override
   Future<Map<String, dynamic>?> logout({required String token}) async {
     try {
       var client = http.Client();
