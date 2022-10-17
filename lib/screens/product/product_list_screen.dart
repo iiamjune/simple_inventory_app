@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/product/product_list_model.dart';
 import 'package:flutter_application_1/repositories/auth_repository.dart';
-import 'package:flutter_application_1/repositories/product_respository.dart';
+import 'package:flutter_application_1/repositories/product_repository.dart';
 import 'package:flutter_application_1/services/shared_preferences_service.dart';
 import 'package:flutter_application_1/widgets/dialog.dart';
 import 'package:number_pagination/number_pagination.dart';
