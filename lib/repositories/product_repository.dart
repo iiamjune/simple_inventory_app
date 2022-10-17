@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_application_1/repositories/product_repository_interface.dart';
 import 'package:http/http.dart' as http;
 
 import '../constants/endpoints.dart';
@@ -9,7 +10,7 @@ import '../models/product/product_data_model.dart';
 import '../models/product/product_model.dart';
 import '../services/api_service.dart';
 
-class ProductRepository {
+class ProductRepository implements ProductRepositoryInterface {
   ProductRepository(this.context);
   BuildContext context;
 
