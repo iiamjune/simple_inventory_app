@@ -242,6 +242,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return isURL(url, requireTld: false);
   }
 
+  void navigateBackToProductList() {
+    Navigation(context).backToProductList();
+  }
+
   @override
   void initState() {
     initData();
@@ -263,7 +267,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigation(context).backToProductList();
+        navigateBackToProductList();
         return false;
       },
       child: SafeArea(
@@ -276,7 +280,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                Navigation(context).backToProductList();
+                navigateBackToProductList();
               },
             ),
           ),

@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: PageAppBar(Label.login),
+        appBar: pageAppBar(Label.login),
         body: Form(
           key: _formKey,
           autovalidateMode: AutovalidateMode.disabled,

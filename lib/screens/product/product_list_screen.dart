@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/product/product_list_model.dart';
 import 'package:flutter_application_1/repositories/auth_repository.dart';
 import 'package:flutter_application_1/repositories/product_repository.dart';
-import 'package:flutter_application_1/services/shared_preferences_service.dart';
 import 'package:flutter_application_1/widgets/dialog.dart';
 import 'package:number_pagination/number_pagination.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,10 +40,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
   /// It gets the logout data from the server and sets the state of the widget
   void getLogoutData() async {
     logoutData = await authRepo.logout(token: token!);
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
     setState(() {
       if (logoutData!.containsKey("message")) {
         if (logoutData?["message"] == "Logged out") {
-          SharedPref(context).remove("token");
+          sharedPref.remove("token");
           success = true;
           message = logoutData?["message"];
         } else {
@@ -63,7 +63,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
     setState(() {
       isProcessing = true;
     });
-    token = await SharedPref(context).getString("token");
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    token = sharedPref.getString("token");
     productListData = (await productRepo.getProductList(
         token: token!, pageNumber: pageNumber))!;
     products = productListModelFromJson(json.encode(productListData["data"]));
@@ -99,8 +100,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
         deleteResult = false;
         message = Label.deleteUnsuccessful;
       }
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
+      showSnackBar(message: message);
     }
     return deleteResult;
   }
@@ -111,14 +111,29 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
     Future.delayed(const Duration(seconds: 2)).then((value) {
       if (success) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(message!)));
-        Navigation(context).goToLogin();
+        showSnackBar(message: message!);
+        navigateToLogin();
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(message!)));
+        showSnackBar(message: message!);
       }
     });
+  }
+
+  void navigateToEditProduct() {
+    Navigation(context).goToEditProduct();
+  }
+
+  void navigateToLogin() {
+    Navigation(context).goToLogin();
+  }
+
+  void navigateToAddProduct() {
+    Navigation(context).goToAddProduct();
+  }
+
+  void showSnackBar({required String message}) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   void initData() {
@@ -148,7 +163,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.indigo[600],
         onPressed: () {
-          Navigation(context).goToAddProduct();
+          navigateToAddProduct();
         },
         child: const Icon(Icons.add),
       ),
@@ -253,7 +268,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                       await SharedPreferences.getInstance();
                                   prefs.setString("productID",
                                       products[index].id.toString());
-                                  Navigation(context).goToEditProduct();
+                                  navigateToEditProduct();
                                 },
                               ),
                               Divider(

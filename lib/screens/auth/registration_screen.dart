@@ -207,7 +207,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: PageAppBar(Label.registration),
+        appBar: pageAppBar(Label.registration),
         body: Form(
           key: _formKey,
           autovalidateMode: AutovalidateMode.disabled,

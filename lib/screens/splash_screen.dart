@@ -22,6 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
   String? emailError;
   String? passwordError;
   String? token;
+  final AuthService authService = AuthService();
 
   initData() {
     setState(() {
@@ -38,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   getCheckResult() async {
-    isLoggedIn = await AuthService(context).isLoggedIn();
+    isLoggedIn = await authService.isLoggedIn();
   }
 
   @override

@@ -3,11 +3,11 @@ import 'package:flutter_application_1/repositories/product_repository.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/dropdown.dart';
 import 'package:flutter_application_1/widgets/textformfield.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:validators/validators.dart';
 
 import '../../constants/labels.dart';
 import '../../services/navigation_service.dart';
-import '../../services/shared_preferences_service.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -43,7 +43,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
   /// `initData()` is an async function that gets the token from the shared preferences and assigns it
   /// to the `token` variable
   void initData() async {
-    token = await SharedPref(context).getString("token");
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    token = sharedPref.getString("token");
   }
 
   /// It takes the data from the form and sends it to the server
@@ -200,6 +201,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return isURL(url, requireTld: false);
   }
 
+  void navigateBackToProductList() {
+    Navigation(context).backToProductList();
+  }
+
   @override
   void initState() {
     initData();
@@ -219,7 +224,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigation(context).backToProductList();
+        navigateBackToProductList();
         return false;
       },
       child: SafeArea(
@@ -232,7 +237,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                Navigation(context).backToProductList();
+                navigateBackToProductList();
               },
             ),
           ),
