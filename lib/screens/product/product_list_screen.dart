@@ -30,15 +30,17 @@ class _ProductListScreenState extends State<ProductListScreen> {
   int? deleteData;
   bool urlIsValid = false;
   Color arrowColor = Colors.indigo[600]!;
-  Map<String, dynamic> responseData = {};
+  Map<String, dynamic> productListData = {};
   int? pageTotal;
   int? currentPage;
   int? lastPage;
   bool isProcessing = false;
+  final ProductRepository productRepo = ProductRepository();
+  final AuthRepository authRepo = AuthRepository();
 
   /// It gets the logout data from the server and sets the state of the widget
   void getLogoutData() async {
-    logoutData = (await AuthRepository(context).logout(token: token!));
+    logoutData = await authRepo.logout(token: token!);
     setState(() {
       if (logoutData!.containsKey("message")) {
         if (logoutData?["message"] == "Logged out") {
@@ -57,17 +59,17 @@ class _ProductListScreenState extends State<ProductListScreen> {
   ///
   /// Args:
   ///   pageNumber (String): The page number to be loaded.
-  void getResponseData({int? pageNumber}) async {
+  void getProductListData({int? pageNumber}) async {
     setState(() {
       isProcessing = true;
     });
     token = await SharedPref(context).getString("token");
-    responseData = (await ProductRepository(context)
-        .getProductList(token: token!, pageNumber: pageNumber))!;
-    products = productListModelFromJson(json.encode(responseData["data"]));
-    pageTotal = responseData["last_page"];
-    currentPage = responseData["current_page"];
-    lastPage = responseData["last_page"];
+    productListData = (await productRepo.getProductList(
+        token: token!, pageNumber: pageNumber))!;
+    products = productListModelFromJson(json.encode(productListData["data"]));
+    pageTotal = productListData["last_page"];
+    currentPage = productListData["current_page"];
+    lastPage = productListData["last_page"];
     setState(() {
       isProcessing = false;
       isDataLoaded = true;
@@ -86,7 +88,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   Future<bool> getDeleteData(result, index) async {
     bool deleteResult = false;
     if (result) {
-      deleteData = await ProductRepository(context).deleteProduct(
+      deleteData = await productRepo.deleteProduct(
           token: token!, productID: products[index].id.toString());
 
       String message;
@@ -97,7 +99,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
         deleteResult = false;
         message = Label.deleteUnsuccessful;
       }
-
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(message)));
     }
@@ -121,7 +122,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   void initData() {
-    getResponseData(pageNumber: currentPage);
+    getProductListData(pageNumber: currentPage);
   }
 
   @override
@@ -173,7 +174,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       key: UniqueKey(),
                       direction: DismissDirection.startToEnd,
                       onDismissed: (direction) {
-                        getResponseData();
+                        getProductListData();
                       },
                       confirmDismiss: (direction) async {
                         final result = await showDialog(
@@ -282,7 +283,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     onPageChanged: (pageNumber) {
                       setState(() {
                         currentPage = pageNumber;
-                        getResponseData(pageNumber: pageNumber);
+                        getProductListData(pageNumber: pageNumber);
                       });
                     },
                     pageTotal: pageTotal ?? 0,

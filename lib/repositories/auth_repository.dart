@@ -11,10 +11,11 @@ import '../models/auth/registration_model.dart';
 import '../services/api_service.dart';
 
 class AuthRepository implements AuthRepositoryInterface {
-  AuthRepository(this.context);
-  BuildContext context;
+  AuthRepository([this.context]);
+  BuildContext? context;
 
   List<MapEntry<String, String>> entries = [accept, contentType, accessControl];
+  final ApiService apiService = ApiService();
 
   /// It takes in 4 strings, sends a POST request to the server, and returns a Map<String, dynamic>?
   ///
@@ -32,9 +33,8 @@ class AuthRepository implements AuthRepositoryInterface {
     try {
       var client = http.Client();
       var response = await client.post(
-        ApiService(context).url(endpoint: EndPoint.register),
-        headers: await ApiService(context)
-            .headers(entries: entries, withToken: false),
+        apiService.url(endpoint: EndPoint.register),
+        headers: await apiService.headers(entries: entries, withToken: false),
         body: registrationModelToJson(RegistrationModel(
             name: name,
             email: email,
@@ -68,9 +68,8 @@ class AuthRepository implements AuthRepositoryInterface {
     try {
       var client = http.Client();
       var response = await client.post(
-        ApiService(context).url(endpoint: EndPoint.login),
-        headers: await ApiService(context)
-            .headers(entries: entries, withToken: false),
+        apiService.url(endpoint: EndPoint.login),
+        headers: await apiService.headers(entries: entries, withToken: false),
         body: loginModelToJson(LoginModel(
           email: email,
           password: password,
@@ -102,9 +101,8 @@ class AuthRepository implements AuthRepositoryInterface {
     try {
       var client = http.Client();
       var response = await client.post(
-        ApiService(context).url(endpoint: EndPoint.logout),
-        headers:
-            await ApiService(context).headers(entries: entries, token: token),
+        apiService.url(endpoint: EndPoint.logout),
+        headers: await apiService.headers(entries: entries, token: token),
       );
 
       if (response.statusCode == 201) {

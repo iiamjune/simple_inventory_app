@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import '../constants/globals.dart';
 
 class ApiService {
-  ApiService(this.context);
-  BuildContext context;
+  ApiService([this.context]);
+  BuildContext? context;
 
   /// It takes a list of key-value pairs and returns a map of key-value pairs
   ///

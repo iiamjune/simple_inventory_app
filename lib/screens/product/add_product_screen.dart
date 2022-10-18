@@ -38,6 +38,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   String? priceFormatError;
   String? price;
   bool urlIsValid = false;
+  final ProductRepository productRepo = ProductRepository();
 
   /// `initData()` is an async function that gets the token from the shared preferences and assigns it
   /// to the `token` variable
@@ -79,7 +80,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       }
     });
 
-    data = await ProductRepository(context).addProduct(
+    data = await productRepo.addProduct(
       token: token!,
       name: productNameController.text,
       imageLink: imageLink!,

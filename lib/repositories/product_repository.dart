@@ -11,10 +11,11 @@ import '../models/product/product_model.dart';
 import '../services/api_service.dart';
 
 class ProductRepository implements ProductRepositoryInterface {
-  ProductRepository(this.context);
-  BuildContext context;
+  ProductRepository([this.context]);
+  BuildContext? context;
 
   List<MapEntry<String, String>> entries = [accept, contentType, accessControl];
+  final ApiService apiService = ApiService();
 
   /// It takes a token and a page number as parameters, and returns a map of dynamic data
   ///
@@ -30,9 +31,8 @@ class ProductRepository implements ProductRepositoryInterface {
     try {
       var client = http.Client();
       var response = await client.get(
-        ApiService(context).url(endpoint: EndPoint.products, page: pageNumber),
-        headers:
-            await ApiService(context).headers(entries: entries, token: token),
+        apiService.url(endpoint: EndPoint.products, page: pageNumber),
+        headers: await apiService.headers(entries: entries, token: token),
       );
 
       if (response.statusCode == 200) {
@@ -61,10 +61,9 @@ class ProductRepository implements ProductRepositoryInterface {
     try {
       var client = http.Client();
       var response = await client.get(
-        ApiService(context).url(
+        apiService.url(
             endpoint: EndPoint.products, query: productID, withQuery: true),
-        headers:
-            await ApiService(context).headers(entries: entries, token: token),
+        headers: await apiService.headers(entries: entries, token: token),
       );
 
       if (response.statusCode == 200) {
@@ -106,10 +105,9 @@ class ProductRepository implements ProductRepositoryInterface {
     try {
       var client = http.Client();
       var response = await client.put(
-          ApiService(context).url(
+          apiService.url(
               endpoint: EndPoint.products, query: productID, withQuery: true),
-          headers:
-              await ApiService(context).headers(entries: entries, token: token),
+          headers: await apiService.headers(entries: entries, token: token),
           body: productModelToJson(ProductModel(
             name: name,
             imageLink: imageLink,
@@ -154,17 +152,16 @@ class ProductRepository implements ProductRepositoryInterface {
       required bool isPublished}) async {
     try {
       var client = http.Client();
-      var response = await client.post(
-          ApiService(context).url(endpoint: EndPoint.products),
-          headers:
-              await ApiService(context).headers(entries: entries, token: token),
-          body: productModelToJson(ProductModel(
-            name: name,
-            imageLink: imageLink,
-            description: description,
-            price: price,
-            isPublished: isPublished,
-          )));
+      var response =
+          await client.post(apiService.url(endpoint: EndPoint.products),
+              headers: await apiService.headers(entries: entries, token: token),
+              body: productModelToJson(ProductModel(
+                name: name,
+                imageLink: imageLink,
+                description: description,
+                price: price,
+                isPublished: isPublished,
+              )));
 
       if (response.statusCode == 201) {
         print(json.decode(response.body));
@@ -198,10 +195,9 @@ class ProductRepository implements ProductRepositoryInterface {
     try {
       var client = http.Client();
       var response = await client.delete(
-        ApiService(context).url(
+        apiService.url(
             endpoint: EndPoint.products, query: productID, withQuery: true),
-        headers:
-            await ApiService(context).headers(entries: entries, token: token),
+        headers: await apiService.headers(entries: entries, token: token),
       );
 
       if (response.statusCode == 200) {

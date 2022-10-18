@@ -30,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String? token;
   bool success = false;
   bool isProcessing = false;
+  final AuthRepository authRepo = AuthRepository();
 
   /// It's making an API call to a server, and if the response contains an error, it will store the error
   /// message in a variable
@@ -37,8 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       isProcessing = true;
     });
-    data = (await AuthRepository(context)
-        .login(emailController.text, passwordController.text));
+    data = await authRepo.login(emailController.text, passwordController.text);
     setState(() {
       if (data!.containsKey("message")) {
         success = false;

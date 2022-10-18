@@ -40,6 +40,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String? token;
   bool success = false;
   bool isProcessing = false;
+  final AuthRepository authRepo = AuthRepository();
 
   /// It's making an API call to a server, and if the response contains an error, it will store the error
   /// message in a variable
@@ -63,12 +64,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       }
     });
 
-    data = (await AuthRepository(context).register(
+    data = await authRepo.register(
       nameController.text,
       email!,
       passwordController.text,
       passwordConfirmationController.text,
-    ));
+    );
 
     setState(() {
       if (data!.containsKey("errors")) {

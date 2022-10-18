@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/repositories/product_repository.dart';
-import 'package:flutter_application_1/services/shared_preferences_service.dart';
 import 'package:flutter_application_1/widgets/button.dart';
 import 'package:flutter_application_1/widgets/dropdown.dart';
 import 'package:flutter_application_1/widgets/textformfield.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:validators/validators.dart';
 
 import '../../constants/labels.dart';
@@ -45,13 +45,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
   String? priceError;
   String? priceFormatError;
   String? price;
+  final ProductRepository productRepo = ProductRepository();
 
   /// It gets the data from the server and then set the data to the textfield
   void initData() async {
-    token = await SharedPref(context).getString("token");
-    productID = await SharedPref(context).getString("productID");
-    productData = (await ProductRepository(context)
-        .getProduct(token: token!, productID: productID!));
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    token = sharedPref.getString("token");
+    productID = sharedPref.getString("productID");
+    productData =
+        await productRepo.getProduct(token: token!, productID: productID!);
     idController.text = productData?.id.toString() ?? "";
     userIDController.text = productData?.userId.toString() ?? "";
     productNameController.text = productData?.name ?? "";
@@ -96,7 +98,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       }
     });
 
-    data = await ProductRepository(context).editProduct(
+    data = await productRepo.editProduct(
       token: token!,
       productID: productID!,
       name: productNameController.text,
