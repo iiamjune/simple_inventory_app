@@ -52,6 +52,7 @@ class AuthRepository implements AuthRepositoryInterface {
     } catch (e) {
       print(e);
     }
+    return null;
   }
 
   /// It takes in an email and password, and returns a Map<String, dynamic>?
@@ -86,6 +87,7 @@ class AuthRepository implements AuthRepositoryInterface {
     } catch (e) {
       print(e);
     }
+    return null;
   }
 
   /// It takes a token as a parameter, sends a post request to the server, and returns a json response
@@ -115,5 +117,6 @@ class AuthRepository implements AuthRepositoryInterface {
     } catch (e) {
       print(e);
     }
+    return null;
   }
 }
