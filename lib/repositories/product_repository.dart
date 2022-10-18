@@ -24,6 +24,7 @@ class ProductRepository implements ProductRepositoryInterface {
   ///
   /// Returns:
   ///   A Future<Map<String, dynamic>?>
+  @override
   Future<Map<String, dynamic>?> getProductList(
       {required String token, int? pageNumber}) async {
     try {
@@ -43,6 +44,7 @@ class ProductRepository implements ProductRepositoryInterface {
     } catch (e) {
       print(e);
     }
+    return null;
   }
 
   /// It takes a token and a productID, and returns a ProductDataModel
@@ -53,6 +55,7 @@ class ProductRepository implements ProductRepositoryInterface {
   ///
   /// Returns:
   ///   A Future<ProductDataModel?>
+  @override
   Future<ProductDataModel?> getProduct(
       {required String token, required String productID}) async {
     try {
@@ -74,6 +77,7 @@ class ProductRepository implements ProductRepositoryInterface {
     } catch (e) {
       print(e);
     }
+    return null;
   }
 
   /// It takes in a token, productID, name, imageLink, description, price, and isPublished, and returns
@@ -90,6 +94,7 @@ class ProductRepository implements ProductRepositoryInterface {
   ///
   /// Returns:
   ///   A Future<Map<String, dynamic>?>
+  @override
   Future<Map<String, dynamic>?> editProduct(
       {required String token,
       required String productID,
@@ -123,6 +128,7 @@ class ProductRepository implements ProductRepositoryInterface {
     } catch (e) {
       print(e);
     }
+    return null;
   }
 
   /// It takes in a token, name, imageLink, description, price, and isPublished, and returns a
@@ -138,6 +144,7 @@ class ProductRepository implements ProductRepositoryInterface {
   ///
   /// Returns:
   ///   A Future<Map<String, dynamic>?>
+  @override
   Future<Map<String, dynamic>?> addProduct(
       {required String token,
       required String name,
@@ -169,6 +176,7 @@ class ProductRepository implements ProductRepositoryInterface {
     } catch (e) {
       print(e);
     }
+    return null;
   }
 
   /// It takes a token and a productID as required parameters, and then it makes a DELETE request to the
@@ -181,6 +189,7 @@ class ProductRepository implements ProductRepositoryInterface {
   ///
   /// Returns:
   ///   The result of the delete request.
+  @override
   Future<int> deleteProduct({
     required String token,
     required String productID,
